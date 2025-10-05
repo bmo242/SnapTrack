@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Job, TodoItem, defaultTodoTemplates } from '@/types';
-import AddJobForm from '@/components/AddJobForm';
+import Header from '@/components/Header'; // Import the new Header component
 import JobCard from '@/components/JobCard';
 import { v4 as uuidv4 } from 'uuid';
 import { Separator } from '@/components/ui/separator';
@@ -100,18 +100,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-900 text-foreground">
-      <h1 className="text-4xl font-bold mb-8 text-center">SnapTrack</h1>
+      <Header onAddJob={handleAddJob} /> {/* Use the new Header component */}
 
-      <div className="w-full max-w-md mb-8">
-        <AddJobForm onAddJob={handleAddJob} />
-      </div>
-
-      <Separator className="my-8 w-full max-w-2xl" />
+      <Separator className="my-8 w-full max-w-4xl" /> {/* Adjusted max-w for separator */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl">
         {jobs.length === 0 ? (
           <p className="text-center text-lg text-muted-foreground col-span-full">
-            No jobs added yet. Create your first job above!
+            No jobs added yet. Click "Add New Job" to get started!
           </p>
         ) : (
           jobs.map((job) => (
