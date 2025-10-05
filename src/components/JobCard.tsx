@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // Import Input for custom todo
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
 import { PlusCircle, CalendarIcon } from 'lucide-react';
@@ -10,9 +11,19 @@ interface JobCardProps {
   job: Job;
   onToggleTodo: (jobId: string, todoId: string) => void;
   onAddTemplatedTodos: (jobId: string) => void;
+  onAddCustomTodo: (jobId: string, todoTitle: string) => void; // New prop for custom todos
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodos }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodos, onAddCustomTodo }) => {
+  const [customTodoTitle, setCustomTodoTitle] = useState('');
+
+  const handleCustomTodoSubmit = () => {
+    if (customTodoTitle.trim()) {
+      onAddCustomTodo(job.id, customTodoTitle);
+      setCustomTodoTitle('');
+    }
+  };
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
@@ -46,14 +57,33 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodo
             ))}
           </div>
         )}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onAddTemplatedTodos(job.id)}
-          className="w-full"
-        >
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Project Extras
-        </Button>
+
+        {!job.templatedTodosAdded ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onAddTemplatedTodos(job.id)}
+            className="w-full mb-2"
+          >
+            <PlusCircle className="mr-2 h-4 w-4" /> Add Project Extras
+          </Button>
+        ) : (
+          <div className="flex space-x-2 mb-2">
+            <Input
+              placeholder="Add custom to-do"
+              value={customTodoTitle}
+              onChange={(e) => setCustomTodoTitle(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleCustomTodoSubmit();
+                }
+              }}
+            />
+            <Button onClick={handleCustomTodoSubmit} size="sm">
+              Add
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -17,6 +17,7 @@ const Index = () => {
       todos: [],
       startDate,
       deadlineDate,
+      templatedTodosAdded: false, // Initialize the flag
     };
     setJobs((prevJobs) => [...prevJobs, newJob]);
   };
@@ -66,8 +67,30 @@ const Index = () => {
                 ...defaultTodoTemplates.map((template) => ({
                   id: uuidv4(),
                   title: template.title,
-                  status: 'empty', // Initialize with 'empty' status
+                  status: 'empty',
                 })),
+              ],
+              templatedTodosAdded: true, // Set flag to true after adding
+            }
+          : job
+      )
+    );
+  };
+
+  const handleAddCustomTodo = (jobId: string, todoTitle: string) => {
+    if (!todoTitle.trim()) return;
+    setJobs((prevJobs) =>
+      prevJobs.map((job) =>
+        job.id === jobId
+          ? {
+              ...job,
+              todos: [
+                ...job.todos,
+                {
+                  id: uuidv4(),
+                  title: todoTitle,
+                  status: 'empty',
+                },
               ],
             }
           : job
@@ -97,6 +120,7 @@ const Index = () => {
               job={job}
               onToggleTodo={handleToggleTodo}
               onAddTemplatedTodos={handleAddTemplatedTodos}
+              onAddCustomTodo={handleAddCustomTodo}
             />
           ))
         )}
