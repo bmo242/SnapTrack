@@ -27,9 +27,28 @@ const Index = () => {
         job.id === jobId
           ? {
               ...job,
-              todos: job.todos.map((todo) =>
-                todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-              ),
+              todos: job.todos.map((todo) => {
+                if (todo.id === todoId) {
+                  let newStatus: TodoItem['status'];
+                  switch (todo.status) {
+                    case 'empty':
+                      newStatus = 'checked';
+                      break;
+                    case 'checked':
+                      newStatus = 'not-needed';
+                      break;
+                    case 'not-needed':
+                      newStatus = 'unsure';
+                      break;
+                    case 'unsure':
+                    default:
+                      newStatus = 'empty';
+                      break;
+                  }
+                  return { ...todo, status: newStatus };
+                }
+                return todo;
+              }),
             }
           : job
       )
@@ -47,7 +66,7 @@ const Index = () => {
                 ...defaultTodoTemplates.map((template) => ({
                   id: uuidv4(),
                   title: template.title,
-                  completed: false,
+                  status: 'empty', // Initialize with 'empty' status
                 })),
               ],
             }
@@ -58,7 +77,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-900 text-foreground">
-      <h1 className="text-4xl font-bold mb-8 text-center">Photographer's Job List</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">SnapTrack</h1>
 
       <div className="w-full max-w-md mb-8">
         <AddJobForm onAddJob={handleAddJob} />

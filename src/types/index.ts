@@ -1,7 +1,7 @@
 export interface TodoItem {
   id: string;
   title: string;
-  completed: boolean;
+  status: 'empty' | 'checked' | 'not-needed' | 'unsure';
 }
 
 export interface Job {
@@ -13,7 +13,7 @@ export interface Job {
   deadlineDate?: string; // Added for deadline date
 }
 
-export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'completed'>[] = [
+export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status'>[] = [
   { title: "Client Communication" },
   { title: "Pre-shoot Planning" },
   { title: "Equipment Check" },

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { TodoItem as TodoItemType } from '@/types';
+import MultiStateCheckbox from './MultiStateCheckbox'; // Import the new component
 
 interface TodoItemProps {
   todo: TodoItemType;
@@ -9,17 +9,19 @@ interface TodoItemProps {
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle }) => {
+  const isCompleted = todo.status === 'checked';
+
   return (
     <div className="flex items-center space-x-2 py-1">
-      <Checkbox
+      <MultiStateCheckbox
         id={`todo-${todo.id}`}
-        checked={todo.completed}
-        onCheckedChange={() => onToggle(todo.id)}
+        status={todo.status}
+        onStatusChange={() => onToggle(todo.id)}
       />
       <Label
         htmlFor={`todo-${todo.id}`}
         className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
-          todo.completed ? "line-through text-muted-foreground" : ""
+          isCompleted ? "line-through text-muted-foreground" : ""
         }`}
       >
         {todo.title}

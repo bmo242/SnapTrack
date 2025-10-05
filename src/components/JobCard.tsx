@@ -52,7 +52,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodo
           onClick={() => onAddTemplatedTodos(job.id)}
           className="w-full"
         >
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Templated To-Dos
+          <PlusCircle className="mr-2 h-4 w-4" /> Add Project Extras
         </Button>
       </CardContent>
     </Card>
