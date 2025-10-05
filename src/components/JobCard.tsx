@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface JobCardProps {
   job: Job;
@@ -17,6 +18,22 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodo
       <CardHeader>
         <CardTitle>{job.title}</CardTitle>
         <CardDescription>{job.description}</CardDescription>
+        {(job.startDate || job.deadlineDate) && (
+          <div className="mt-2 text-sm text-muted-foreground flex flex-col space-y-1">
+            {job.startDate && (
+              <div className="flex items-center">
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                <span>Start: {job.startDate}</span>
+              </div>
+            )}
+            {job.deadlineDate && (
+              <div className="flex items-center">
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                <span>Deadline: {job.deadlineDate}</span>
+              </div>
+            )}
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>

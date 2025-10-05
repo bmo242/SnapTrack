@@ -9,12 +9,14 @@ import { Separator } from '@/components/ui/separator';
 const Index = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
 
-  const handleAddJob = (title: string, description: string) => {
+  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string) => {
     const newJob: Job = {
       id: uuidv4(),
       title,
       description,
       todos: [],
+      startDate,
+      deadlineDate,
     };
     setJobs((prevJobs) => [...prevJobs, newJob]);
   };

@@ -9,6 +9,8 @@ export interface Job {
   title: string;
   description: string;
   todos: TodoItem[];
+  startDate?: string; // Added for start date
+  deadlineDate?: string; // Added for deadline date
 }
 
 export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'completed'>[] = [
