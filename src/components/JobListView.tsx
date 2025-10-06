@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Job } from '@/types';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, parse } from 'date-fns'; // Import parse
 import { Briefcase, CalendarIcon, Clock } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -42,6 +42,16 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
     return result;
   }, [jobs]);
 
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return '';
+    try {
+      return format(parse(timeString, 'HH:mm', new Date()), 'h:mm a');
+    } catch (error) {
+      console.error("Error formatting time:", timeString, error);
+      return timeString;
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-4 bg-card rounded-lg shadow-md">
       {sortedAndGroupedJobs.length === 0 ? (
@@ -74,9 +84,9 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
                     <div className="flex items-center text-xs text-muted-foreground ml-6 mt-1">
                       <Clock className="mr-1 h-3 w-3" />
                       <span>
-                        {job.startTime && `Start: ${job.startTime}`}
+                        {job.startTime && `Start: ${formatTime(job.startTime)}`}
                         {job.startTime && job.endTime && ` - `}
-                        {job.endTime && `End: ${job.endTime}`}
+                        {job.endTime && `End: ${formatTime(job.endTime)}`}
                       </span>
                     </div>
                   )}

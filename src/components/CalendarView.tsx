@@ -11,6 +11,7 @@ import {
   isSameDay,
   addDays,
   isToday,
+  parse, // Import parse
 } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Briefcase } from 'lucide-react';
@@ -93,6 +94,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob }) => {
     setIsJobDetailsDialogOpen(true);
   };
 
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return '';
+    try {
+      return format(parse(timeString, 'HH:mm', new Date()), 'h:mm a');
+    } catch (error) {
+      console.error("Error formatting time:", timeString, error);
+      return timeString;
+    }
+  };
+
   return (
     <div className="p-4 bg-card rounded-lg shadow-md w-full max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-4">
@@ -164,9 +175,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob }) => {
                     <p className="text-sm text-muted-foreground">{job.category}</p>
                     {(job.startTime || job.endTime) && (
                       <p className="text-xs text-muted-foreground">
-                        {job.startTime && `Start: ${job.startTime}`}
+                        {job.startTime && `Start: ${formatTime(job.startTime)}`}
                         {job.startTime && job.endTime && ` - `}
-                        {job.endTime && `End: ${job.endTime}`}
+                        {job.endTime && `End: ${formatTime(job.endTime)}`}
                       </p>
                     )}
                   </div>

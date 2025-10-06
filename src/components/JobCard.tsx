@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
 import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock, ListChecks } from 'lucide-react'; // Import Clock and ListChecks icon
-import { format, parseISO, differenceInDays, isPast, isToday } from 'date-fns';
+import { format, parseISO, differenceInDays, isPast, isToday, parse } from 'date-fns'; // Import parse
 import {
   AlertDialog,
   AlertDialogAction,
@@ -100,6 +100,17 @@ const JobCard: React.FC<JobCardProps> = ({
     }
   }
 
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return '';
+    try {
+      // Parse the time string (e.g., "14:30") and format it to AM/PM
+      return format(parse(timeString, 'HH:mm', new Date()), 'h:mm a');
+    } catch (error) {
+      console.error("Error formatting time:", timeString, error);
+      return timeString; // Fallback to original string if parsing fails
+    }
+  };
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
@@ -189,9 +200,9 @@ const JobCard: React.FC<JobCardProps> = ({
               <div className="flex items-center">
                 <Clock className="mr-2 h-4 w-4" />
                 <span>
-                  {job.startTime && `Start: ${job.startTime}`}
+                  {job.startTime && `Start: ${formatTime(job.startTime)}`}
                   {job.startTime && job.endTime && ` - `}
-                  {job.endTime && `End: ${job.endTime}`}
+                  {job.endTime && `End: ${formatTime(job.endTime)}`}
                 </span>
               </div>
             )}
