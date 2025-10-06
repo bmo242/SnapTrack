@@ -3,18 +3,22 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Overview from "./pages/Overview"; // New Overview page
-import JobsPage from "./pages/JobsPage"; // Renamed Jobs page
+import Overview from "./pages/Overview";
+import JobsPage from "./pages/JobsPage";
 import NotFound from "./pages/NotFound";
 import MobileOnlyWrapper from "./components/MobileOnlyWrapper";
-import { useJobsPersistence } from '@/hooks/use-jobs-persistence'; // Import the hook
+import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { v4 as uuidv4 } from 'uuid';
 import { Job, TodoItem, defaultTodoTemplates } from '@/types';
+import Header from "./components/Header"; // Import Header
+import MobileNav from "./components/MobileNav"; // Import MobileNav
+import { useState } from "react"; // Import useState
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [jobs, setJobs] = useJobsPersistence();
+  const [isNavOpen, setIsNavOpen] = useState(false); // State for mobile nav
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
     const newJob: Job = {

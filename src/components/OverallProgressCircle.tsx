@@ -42,7 +42,7 @@ const OverallProgressCircle: React.FC<OverallProgressCircleProps> = ({ jobs }) =
   const circleColorClass = getCircleColorClass(progress);
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 bg-card rounded-lg shadow-sm mb-8 w-full max-w-4xl">
+    <div className="flex flex-col items-center justify-center p-4 bg-card rounded-lg shadow-sm mb-8 w-full"> {/* Removed max-w-4xl */}
       <h2 className="text-2xl font-bold mb-4">Overall Progress</h2>
       <div className="relative w-24 h-24">
         <svg className="w-full h-full" viewBox="0 0 96 96">
