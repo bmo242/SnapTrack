@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { Job, TodoItem, defaultTodoTemplates } from '@/types';
+import { Job, TodoItem, defaultTodoTemplates, defaultCategories } from '@/types';
 import Header from '@/components/Header';
 import JobCard from '@/components/JobCard';
 import { v4 as uuidv4 } from 'uuid';
 import { Separator } from '@/components/ui/separator';
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
-import OverallProgressCircle from '@/components/OverallProgressCircle'; // Import the new component
+import OverallProgressCircle from '@/components/OverallProgressCircle';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 const Index = () => {
   const [jobs, setJobs] = useJobsPersistence();
+  const [selectedCategory, setSelectedCategory] = useState("All"); // New state for category filter
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
     const newJob: Job = {
@@ -111,22 +114,44 @@ const Index = () => {
     );
   };
 
+  const filteredJobs = selectedCategory === "All"
+    ? jobs
+    : jobs.filter(job => job.category === selectedCategory);
+
   return (
     <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-900 text-foreground">
       <Header onAddJob={handleAddJob} />
 
-      {/* Overall Progress Circle */}
-      <OverallProgressCircle jobs={jobs} />
+      <div className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-between mb-8 p-4 bg-card rounded-lg shadow-sm">
+        <div className="flex-1 mb-4 sm:mb-0 sm:mr-4">
+          <Label htmlFor="categoryFilter" className="sr-only">Filter by Category</Label>
+          <Select onValueChange={setSelectedCategory} value={selectedCategory}>
+            <SelectTrigger id="categoryFilter" className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              {defaultCategories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <OverallProgressCircle jobs={jobs} />
+      </div>
 
       <Separator className="my-8 w-full max-w-4xl" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl">
-        {jobs.length === 0 ? (
+        {filteredJobs.length === 0 ? (
           <p className="text-center text-lg text-muted-foreground col-span-full">
-            No jobs added yet. Click "Add New Job" to get started!
+            {selectedCategory === "All"
+              ? "No jobs added yet. Click 'Add New Job' to get started!"
+              : `No jobs found in the '${selectedCategory}' category.`}
           </p>
         ) : (
-          jobs.map((job) => (
+          filteredJobs.map((job) => (
             <JobCard
               key={job.id}
               job={job}

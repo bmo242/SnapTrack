@@ -31,6 +31,7 @@ export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status'>[] = [
 ];
 
 export const defaultCategories = [
+  "All", // Added for filtering
   "Food Photography",
   "Corporate Portraits",
   "Commercial Photography",
