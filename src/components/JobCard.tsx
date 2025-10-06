@@ -192,61 +192,63 @@ const JobCard: React.FC<JobCardProps> = ({
         )}
       </CardHeader>
 
-      <Collapsible open={!isCollapsed} onOpenChange={setIsCollapsed} className="w-full px-6 pb-6">
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center w-full">
-            <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
-            <span className="ml-4 text-sm font-medium">{progress}%</span>
-          </div>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
-              {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-              <span className="sr-only">Toggle</span>
-            </Button>
-          </CollapsibleTrigger>
-        </div>
-        <CollapsibleContent>
-          <div className="pt-4">
-            <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>
-            {job.todos.length === 0 ? (
-              <p className="text-muted-foreground text-sm mb-2">No to-do items yet. Add some!</p>
-            ) : (
-              <div className="space-y-1 mb-4">
-                {job.todos.map((todo) => (
-                  <TodoItem key={todo.id} todo={todo} onToggle={(todoId) => onToggleTodo(job.id, todoId)} />
-                ))}
-              </div>
-            )}
-
-            {!job.templatedTodosAdded ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onAddTemplatedTodos(job.id)}
-                className="w-full mb-2"
-              >
-                <PlusCircle className="mr-2 h-4 w-4" /> Add Project Extras
+      <CardContent className="pt-0"> {/* Adjusted padding */}
+        <Collapsible open={!isCollapsed} onOpenChange={setIsCollapsed} className="w-full">
+          <div className="flex items-center justify-between py-4"> {/* Added vertical padding here */}
+            <div className="flex items-center w-full">
+              <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
+              <span className="ml-4 text-sm font-medium">{progress}%</span>
+            </div>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
+                {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                <span className="sr-only">Toggle</span>
               </Button>
-            ) : (
-              <div className="flex space-x-2 mb-2">
-                <Input
-                  placeholder="Add custom to-do"
-                  value={customTodoTitle}
-                  onChange={(e) => setCustomTodoTitle(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleCustomTodoSubmit();
-                    }
-                  }}
-                />
-                <Button onClick={handleCustomTodoSubmit} size="sm">
-                  Add
-                </Button>
-              </div>
-            )}
+            </CollapsibleTrigger>
           </div>
-        </CollapsibleContent>
-      </Collapsible>
+          <CollapsibleContent>
+            <div className="pb-4"> {/* Added bottom padding to content */}
+              <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>
+              {job.todos.length === 0 ? (
+                <p className="text-muted-foreground text-sm mb-2">No to-do items yet. Add some!</p>
+              ) : (
+                <div className="space-y-1 mb-4">
+                  {job.todos.map((todo) => (
+                    <TodoItem key={todo.id} todo={todo} onToggle={(todoId) => onToggleTodo(job.id, todoId)} />
+                  ))}
+                </div>
+              )}
+
+              {!job.templatedTodosAdded ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onAddTemplatedTodos(job.id)}
+                  className="w-full mb-2"
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Project Extras
+                </Button>
+              ) : (
+                <div className="flex space-x-2 mb-2">
+                  <Input
+                    placeholder="Add custom to-do"
+                    value={customTodoTitle}
+                    onChange={(e) => setCustomTodoTitle(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCustomTodoSubmit();
+                      }
+                    }}
+                  />
+                  <Button onClick={handleCustomTodoSubmit} size="sm">
+                    Add
+                  </Button>
+                </div>
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </CardContent>
     </Card>
   );
 };

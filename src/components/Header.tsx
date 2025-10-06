@@ -4,14 +4,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import AddJobForm from './AddJobForm';
 
 interface HeaderProps {
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onAddJob }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string) => {
-    onAddJob(title, description, startDate, deadlineDate);
+  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
+    onAddJob(title, description, startDate, deadlineDate, category);
     setIsDialogOpen(false); // Close the dialog after adding the job
   };
 
