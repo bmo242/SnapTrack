@@ -42,7 +42,7 @@ const JobCard: React.FC<JobCardProps> = ({
 }) => {
   const [customTodoTitle, setCustomTodoTitle] = useState('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false); // Changed to false to load expanded
+  const [isCollapsed, setIsCollapsed] = useState(false); // Initial state: false means expanded
 
   const handleCustomTodoSubmit = () => {
     if (customTodoTitle.trim()) {
@@ -192,9 +192,9 @@ const JobCard: React.FC<JobCardProps> = ({
         )}
       </CardHeader>
 
-      <CardContent className="pt-0"> {/* Adjusted padding */}
-        <Collapsible open={!isCollapsed} onOpenChange={setIsCollapsed} className="w-full">
-          <div className="flex items-center justify-between py-4"> {/* Added vertical padding here */}
+      <CardContent className="pt-0">
+        <Collapsible open={!isCollapsed} onOpenChange={(newOpenState) => setIsCollapsed(!newOpenState)} className="w-full">
+          <div className="flex items-center justify-between py-4">
             <div className="flex items-center w-full">
               <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
               <span className="ml-4 text-sm font-medium">{progress}%</span>
@@ -207,7 +207,7 @@ const JobCard: React.FC<JobCardProps> = ({
             </CollapsibleTrigger>
           </div>
           <CollapsibleContent>
-            <div className="pb-4"> {/* Added bottom padding to content */}
+            <div className="pb-4">
               <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>
               {job.todos.length === 0 ? (
                 <p className="text-muted-foreground text-sm mb-2">No to-do items yet. Add some!</p>
