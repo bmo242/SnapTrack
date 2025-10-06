@@ -23,6 +23,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { getCategoryColor } from '@/lib/category-colors'; // Import the new utility
+import { cn } from '@/lib/utils'; // Import cn utility
 
 interface JobCardProps {
   job: Job;
