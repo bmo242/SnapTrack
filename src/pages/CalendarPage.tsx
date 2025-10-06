@@ -15,9 +15,10 @@ import JobQuickView from '@/components/JobQuickView'; // Import the new JobQuick
 interface CalendarPageProps {
   jobs: Job[];
   onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void;
+  onToggleTodo: (jobId: string, todoId: string) => void; // Add onToggleTodo prop
 }
 
-const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob }) => {
+const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob, onToggleTodo }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false); // State for quick view dialog
@@ -67,7 +68,12 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob }) => {
           <DialogHeader>
             <DialogTitle>Job Details</DialogTitle>
           </DialogHeader>
-          {selectedJobForQuickView && <JobQuickView job={selectedJobForQuickView} />}
+          {selectedJobForQuickView && (
+            <JobQuickView
+              job={selectedJobForQuickView}
+              onToggleTodo={onToggleTodo} // Pass onToggleTodo to JobQuickView
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

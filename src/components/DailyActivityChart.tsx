@@ -121,7 +121,13 @@ const DailyActivityChart: React.FC<DailyActivityChartProps> = ({ jobs }) => {
                   labelFormatter={(label) => `Hour: ${label}`}
                 />
                 <Legend />
-                <Line type="monotone" dataKey="count" stroke="hsl(var(--accent))" activeDot={{ r: 8 }} />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="hsl(var(--primary))" // Changed stroke to primary color for better visibility
+                  activeDot={{ r: 8 }}
+                  dot={{ r: 4, strokeWidth: 2, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--primary))' }} // Added dot properties
+                />
               </LineChart>
             </ResponsiveContainer>
           )}

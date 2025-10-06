@@ -9,9 +9,10 @@ import TodoItem from './TodoItem';
 
 interface JobQuickViewProps {
   job: Job;
+  onToggleTodo: (jobId: string, todoId: string) => void; // Add onToggleTodo prop
 }
 
-const JobQuickView: React.FC<JobQuickViewProps> = ({ job }) => {
+const JobQuickView: React.FC<JobQuickViewProps> = ({ job, onToggleTodo }) => {
   // Re-use progress calculation logic
   const calculateProgressAndCounts = () => {
     let completedCount = 0;
@@ -132,7 +133,7 @@ const JobQuickView: React.FC<JobQuickViewProps> = ({ job }) => {
         <div className="space-y-1">
           <h4 className="text-lg font-semibold mt-4">To-Do List:</h4>
           {job.todos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} onToggle={() => { /* Quick view, no toggle */ }} />
+            <TodoItem key={todo.id} todo={todo} onToggle={(todoId) => onToggleTodo(job.id, todoId)} />
           ))}
         </div>
       )}

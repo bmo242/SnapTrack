@@ -165,6 +165,7 @@ const App = () => {
                   <CalendarPage
                     jobs={jobs}
                     onAddJob={handleAddJob}
+                    onToggleTodo={handleToggleTodo} // Pass onToggleTodo to CalendarPage
                   />
                 }
               />
