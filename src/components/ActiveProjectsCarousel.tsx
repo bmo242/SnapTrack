@@ -41,6 +41,12 @@ const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs, o
 
   const activeJobs = jobs.filter(job => calculateProgress(job) < 100); // Consider jobs with less than 100% progress as active
 
+  // Updated dimensions for a larger circular progress bar
+  const radius = 36; // Increased radius
+  const strokeWidth = 8; // Increased stroke width
+  const viewBoxSize = 80; // Corresponds to w-20 h-20
+  const center = viewBoxSize / 2; // Center for cx and cy
+
   return (
     <Card className="w-full shadow-md">
       <CardHeader>
@@ -51,50 +57,49 @@ const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs, o
           <p className="text-muted-foreground text-center py-4">No active projects.</p>
         ) : (
           <ScrollArea className="w-full whitespace-nowrap pb-4">
-            <div className={cn("flex space-x-4", activeJobs.length === 1 && "justify-center")}> {/* Added justify-center for single item */}
+            <div className={cn("flex space-x-4", activeJobs.length === 1 && "justify-center")}>
               {activeJobs.map((job) => {
                 const progress = calculateProgress(job);
                 const progressBarColorClass = getProgressBarColorClass(progress);
-                const radius = 20; // Smaller radius for carousel circles
                 const circumference = 2 * Math.PI * radius;
                 const offset = circumference - (progress / 100) * circumference;
 
                 return (
                   <Button
                     key={job.id}
-                    variant="ghost" // Use ghost variant for a subtle clickable effect
-                    className="flex flex-col items-center justify-center w-28 h-auto p-2 flex-shrink-0"
-                    onClick={() => onSelectJob(job.id)} // Call onSelectJob with job.id
+                    variant="ghost"
+                    className="flex flex-col items-center justify-center w-32 h-auto p-2 flex-shrink-0" // Adjusted button width
+                    onClick={() => onSelectJob(job.id)}
                   >
-                    <div className="relative w-12 h-12 mb-2">
-                      <svg className="w-full h-full" viewBox="0 0 48 48">
+                    <div className="relative w-20 h-20 mb-2"> {/* Increased container size */}
+                      <svg className="w-full h-full" viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}> {/* Updated viewBox */}
                         <circle
                           className="text-gray-200 dark:text-gray-700"
-                          strokeWidth="4"
+                          strokeWidth={strokeWidth}
                           stroke="currentColor"
                           fill="transparent"
                           r={radius}
-                          cx="24"
-                          cy="24"
+                          cx={center}
+                          cy={center}
                         />
                         <circle
                           className={cn("stroke-current", progressBarColorClass)}
-                          strokeWidth="4"
+                          strokeWidth={strokeWidth}
                           strokeDasharray={circumference}
                           strokeDashoffset={offset}
                           strokeLinecap="round"
                           fill="transparent"
                           r={radius}
-                          cx="24"
-                          cy="24"
-                          transform="rotate(-90 24 24)"
+                          cx={center}
+                          cy={center}
+                          transform={`rotate(-90 ${center} ${center})`}
                         />
                         <text
                           x="50%"
                           y="50%"
                           dominantBaseline="middle"
                           textAnchor="middle"
-                          className="text-xs font-bold text-foreground"
+                          className="text-sm font-bold text-foreground" // Increased text size
                         >
                           {progress}%
                         </text>
