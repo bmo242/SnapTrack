@@ -9,7 +9,7 @@ import OverallProgressCircle from '@/components/OverallProgressCircle';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import MobileNav from '@/components/MobileNav';
-import MobileOnlyWrapper from '@/components/MobileOnlyWrapper'; // Import MobileOnlyWrapper
+// import MobileOnlyWrapper from '@/components/MobileOnlyWrapper'; // Removed MobileOnlyWrapper import
 
 interface JobsPageProps {
   jobs: Job[];
@@ -38,7 +38,7 @@ const JobsPage: React.FC<JobsPageProps> = ({
     : jobs.filter(job => job.category === selectedCategory);
 
   return (
-    <MobileOnlyWrapper> {/* Added MobileOnlyWrapper here */}
+    // <MobileOnlyWrapper> {/* Removed MobileOnlyWrapper here */}
       <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground">
         <Header onAddJob={onAddJob} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={true} />
         <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
@@ -88,7 +88,7 @@ const JobsPage: React.FC<JobsPageProps> = ({
 
         <MadeWithDyad />
       </div>
-    </MobileOnlyWrapper>
+    // </MobileOnlyWrapper>
   );
 };
 

@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
 import { useState } from 'react';
-import MobileOnlyWrapper from '@/components/MobileOnlyWrapper'; // Import MobileOnlyWrapper
+// import MobileOnlyWrapper from '@/components/MobileOnlyWrapper'; // Removed MobileOnlyWrapper import
 
 interface OverviewProps {
   jobs: Job[];
@@ -18,7 +18,7 @@ const Overview: React.FC<OverviewProps> = ({ jobs }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   return (
-    <MobileOnlyWrapper> {/* Added MobileOnlyWrapper here */}
+    // <MobileOnlyWrapper> {/* Removed MobileOnlyWrapper here */}
       <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground">
         <Header onAddJob={() => {}} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={false} />
         <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
@@ -31,7 +31,7 @@ const Overview: React.FC<OverviewProps> = ({ jobs }) => {
         </div>
         <MadeWithDyad />
       </div>
-    </MobileOnlyWrapper>
+    // </MobileOnlyWrapper>
   );
 };
 

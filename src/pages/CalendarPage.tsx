@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
 import JobCalendarView from '@/components/JobCalendarView';
 import { Job } from '@/types';
-import MobileOnlyWrapper from '@/components/MobileOnlyWrapper';
+// import MobileOnlyWrapper from '@/components/MobileOnlyWrapper'; // Removed MobileOnlyWrapper import
 
 interface CalendarPageProps {
   jobs: Job[];
@@ -13,7 +13,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ jobs }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   return (
-    <MobileOnlyWrapper>
+    // <MobileOnlyWrapper> {/* Removed MobileOnlyWrapper here */}
       <div className="min-h-screen flex flex-col items-center bg-black text-white">
         <Header onAddJob={() => {}} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={false} />
         <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
@@ -23,7 +23,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ jobs }) => {
           <JobCalendarView jobs={jobs} />
         </div>
       </div>
-    </MobileOnlyWrapper>
+    // </MobileOnlyWrapper>
   );
 };
 
