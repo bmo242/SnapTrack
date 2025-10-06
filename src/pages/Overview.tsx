@@ -40,7 +40,7 @@ const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser, onAddJob 
         <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
 
         <div className="w-full space-y-6 px-4">
-          <UserProfileHeader user={user} onUpdateUser={onUpdateUser} /> {/* Pass user and onUpdateUser */}
+          <UserProfileHeader user={user} onUpdateUser={onUpdateUser} jobs={jobs} /> {/* Pass user, onUpdateUser, and jobs */}
           <TaskSummary jobs={jobs} />
           <Separator />
           <ActiveProjectsCarousel jobs={jobs} onSelectJob={handleSelectJob} /> {/* Pass onSelectJob */}
