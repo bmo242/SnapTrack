@@ -9,7 +9,7 @@ import OverallProgressCircle from '@/components/OverallProgressCircle';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import MobileNav from '@/components/MobileNav';
-// import MobileOnlyWrapper from '@/components/MobileOnlyWrapper'; // Removed MobileOnlyWrapper import
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import Card components
 
 interface JobsPageProps {
   jobs: Job[];
@@ -38,16 +38,18 @@ const JobsPage: React.FC<JobsPageProps> = ({
     : jobs.filter(job => job.category === selectedCategory);
 
   return (
-    // <MobileOnlyWrapper> {/* Removed MobileOnlyWrapper here */}
-      <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground">
-        <Header onAddJob={onAddJob} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={true} />
-        <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
+    <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground">
+      <Header onAddJob={onAddJob} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={true} />
+      <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
 
-        <div className="w-full flex flex-col sm:flex-row items-center justify-between mb-8 px-4 py-4 bg-card rounded-lg shadow-sm">
-          <div className="flex-1 mb-4 sm:mb-0 sm:mr-4">
+      <div className="w-full px-4 py-6">
+        <h1 className="text-3xl font-bold text-center mb-6">My Jobs</h1>
+
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+          <div className="flex-1 w-full sm:w-auto">
             <Label htmlFor="categoryFilter" className="sr-only">Filter by Category</Label>
             <Select onValueChange={setSelectedCategory} value={selectedCategory}>
-              <SelectTrigger id="categoryFilter" className="w-full sm:w-[180px]">
+              <SelectTrigger id="categoryFilter" className="w-full sm:max-w-[180px]">
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
@@ -59,10 +61,17 @@ const JobsPage: React.FC<JobsPageProps> = ({
               </SelectContent>
             </Select>
           </div>
-          <OverallProgressCircle jobs={jobs} />
+          <Card className="flex-shrink-0 w-full sm:w-auto">
+            <CardHeader className="p-4 pb-2">
+              <CardTitle className="text-lg font-semibold text-center">Overall Progress</CardTitle>
+            </CardHeader>
+            <CardContent className="flex justify-center p-4 pt-0">
+              <OverallProgressCircle jobs={jobs} />
+            </CardContent>
+          </Card>
         </div>
 
-        <Separator className="my-8 w-full px-4" />
+        <Separator className="my-8 w-full" />
 
         <div className="container mx-auto grid grid-cols-1 gap-6 px-4">
           {filteredJobs.length === 0 ? (
@@ -88,7 +97,7 @@ const JobsPage: React.FC<JobsPageProps> = ({
 
         <MadeWithDyad />
       </div>
-    // </MobileOnlyWrapper>
+    </div>
   );
 };
 

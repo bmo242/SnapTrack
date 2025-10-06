@@ -42,45 +42,42 @@ const OverallProgressCircle: React.FC<OverallProgressCircleProps> = ({ jobs }) =
   const circleColorClass = getCircleColorClass(progress);
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 bg-card rounded-lg shadow-sm mb-8 w-full"> {/* Removed max-w-4xl */}
-      <h2 className="text-2xl font-bold mb-4">Overall Progress</h2>
-      <div className="relative w-24 h-24">
-        <svg className="w-full h-full" viewBox="0 0 96 96">
-          {/* Background circle */}
-          <circle
-            className="text-gray-200 dark:text-gray-700"
-            strokeWidth="8"
-            stroke="currentColor"
-            fill="transparent"
-            r={radius}
-            cx="48"
-            cy="48"
-          />
-          {/* Progress circle */}
-          <circle
-            className={circleColorClass}
-            strokeWidth="8"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            stroke="currentColor"
-            fill="transparent"
-            r={radius}
-            cx="48"
-            cy="48"
-            transform="rotate(-90 48 48)"
-          />
-          <text
-            x="50%"
-            y="50%"
-            dominantBaseline="middle"
-            textAnchor="middle"
-            className="text-lg font-bold text-foreground"
-          >
-            {progress}%
-          </text>
-        </svg>
-      </div>
+    <div className="relative w-24 h-24">
+      <svg className="w-full h-full" viewBox="0 0 96 96">
+        {/* Background circle */}
+        <circle
+          className="text-gray-200 dark:text-gray-700"
+          strokeWidth="8"
+          stroke="currentColor"
+          fill="transparent"
+          r={radius}
+          cx="48"
+          cy="48"
+        />
+        {/* Progress circle */}
+        <circle
+          className={circleColorClass}
+          strokeWidth="8"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          stroke="currentColor"
+          fill="transparent"
+          r={radius}
+          cx="48"
+          cy="48"
+          transform="rotate(-90 48 48)"
+        />
+        <text
+          x="50%"
+          y="50%"
+          dominantBaseline="middle"
+          textAnchor="middle"
+          className="text-lg font-bold text-foreground"
+        >
+          {progress}%
+        </text>
+      </svg>
     </div>
   );
 };
