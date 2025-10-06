@@ -1,32 +1,21 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input"; // Import Input for custom todo
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
-import { PlusCircle, CalendarIcon, MoreVertical } from 'lucide-react';
+import { PlusCircle, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import EditJobForm from './EditJobForm'; // Import the new EditJobForm
 
 interface JobCardProps {
   job: Job;
   onToggleTodo: (jobId: string, todoId: string) => void;
   onAddTemplatedTodos: (jobId: string) => void;
-  onAddCustomTodo: (jobId: string, todoTitle: string) => void;
-  onEditJob: (updatedJob: Job) => void; // New prop for editing
-  onDeleteJob: (jobId: string) => void; // New prop for deleting
+  onAddCustomTodo: (jobId: string, todoTitle: string) => void; // New prop for custom todos
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodos, onAddCustomTodo, onEditJob, onDeleteJob }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodos, onAddCustomTodo }) => {
   const [customTodoTitle, setCustomTodoTitle] = useState('');
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleCustomTodoSubmit = () => {
     if (customTodoTitle.trim()) {
@@ -35,14 +24,9 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodo
     }
   };
 
-  const handleEditSave = (updatedJob: Job) => {
-    onEditJob(updatedJob);
-    setIsEditDialogOpen(false);
-  };
-
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="relative">
+      <CardHeader>
         <CardTitle>{job.title}</CardTitle>
         <CardDescription>{job.description}</CardDescription>
         {(job.startDate || job.deadlineDate) && (
@@ -50,28 +34,17 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodo
             {job.startDate && (
               <div className="flex items-center">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                <span>Start: {format(new Date(job.startDate), "PPP")}</span>
+                <span>Start: {job.startDate}</span>
               </div>
             )}
             {job.deadlineDate && (
               <div className="flex items-center">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                <span>Deadline: {format(new Date(job.deadlineDate), "PPP")}</span>
+                <span>Deadline: {job.deadlineDate}</span>
               </div>
             )}
           </div>
         )}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="absolute top-4 right-4">
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDeleteJob(job.id)} className="text-destructive focus:text-destructive">Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </CardHeader>
       <CardContent>
         <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>
@@ -112,15 +85,6 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleTodo, onAddTemplatedTodo
           </div>
         )}
       </CardContent>
-
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Job</DialogTitle>
-          </DialogHeader>
-          <EditJobForm job={job} onSave={handleEditSave} onCancel={() => setIsEditDialogOpen(false)} />
-        </DialogContent>
-      </Dialog>
     </Card>
   );
 };
