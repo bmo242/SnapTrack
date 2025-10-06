@@ -25,8 +25,8 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob }) => {
       onAddJob(
         title,
         description,
-        startDate ? format(startDate, "PPP") : undefined,
-        deadlineDate ? format(deadlineDate, "PPP") : undefined
+        startDate ? format(startDate, "yyyy-MM-dd") : undefined, // Changed to yyyy-MM-dd
+        deadlineDate ? format(deadlineDate, "yyyy-MM-dd") : undefined // Changed to yyyy-MM-dd
       );
       setTitle('');
       setDescription('');
