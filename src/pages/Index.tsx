@@ -6,6 +6,7 @@ import JobCard from '@/components/JobCard';
 import { v4 as uuidv4 } from 'uuid';
 import { Separator } from '@/components/ui/separator';
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
+import OverallProgressCircle from '@/components/OverallProgressCircle'; // Import the new component
 
 const Index = () => {
   const [jobs, setJobs] = useJobsPersistence();
@@ -113,6 +114,9 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-900 text-foreground">
       <Header onAddJob={handleAddJob} />
+
+      {/* Overall Progress Circle */}
+      <OverallProgressCircle jobs={jobs} />
 
       <Separator className="my-8 w-full max-w-4xl" />
 
