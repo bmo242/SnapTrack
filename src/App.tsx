@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
 import NotFound from "./pages/NotFound";
-// import MobileOnlyWrapper from "./components/MobileOnlyWrapper"; // Removed MobileOnlyWrapper from here
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { v4 as uuidv4 } from 'uuid';
 import { Job, TodoItem, defaultTodoTemplates } from '@/types';
@@ -124,9 +123,9 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        {/* MobileOnlyWrapper removed from here */}
+        <> {/* Added a React Fragment here */}
+          <Toaster />
+          <Sonner />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Overview jobs={jobs} />} />
@@ -149,6 +148,7 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
+        </> {/* Closed the React Fragment */}
       </TooltipProvider>
     </QueryClientProvider>
   );
