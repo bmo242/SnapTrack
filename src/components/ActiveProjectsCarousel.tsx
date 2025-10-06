@@ -42,9 +42,9 @@ const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs, o
   const activeJobs = jobs.filter(job => calculateProgress(job) < 100); // Consider jobs with less than 100% progress as active
 
   // Updated dimensions for a larger circular progress bar
-  const radius = 36; // Increased radius
-  const strokeWidth = 8; // Increased stroke width
-  const viewBoxSize = 80; // Corresponds to w-20 h-20
+  const radius = 36; // Radius of the circle
+  const strokeWidth = 8; // Width of the stroke
+  const viewBoxSize = 96; // Corresponds to w-24 h-24
   const center = viewBoxSize / 2; // Center for cx and cy
 
   return (
@@ -71,7 +71,7 @@ const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs, o
                     className="flex flex-col items-center justify-center w-32 h-auto p-2 flex-shrink-0" // Adjusted button width
                     onClick={() => onSelectJob(job.id)}
                   >
-                    <div className="relative w-20 h-20 mb-2"> {/* Increased container size */}
+                    <div className="relative w-24 h-24 mb-2"> {/* Increased container size to w-24 h-24 */}
                       <svg className="w-full h-full" viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}> {/* Updated viewBox */}
                         <circle
                           className="text-gray-200 dark:text-gray-700"
@@ -99,7 +99,7 @@ const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs, o
                           y="50%"
                           dominantBaseline="middle"
                           textAnchor="middle"
-                          className="text-sm font-bold text-foreground" // Increased text size
+                          className="text-lg font-bold text-foreground" // Increased text size
                         >
                           {progress}%
                         </text>
