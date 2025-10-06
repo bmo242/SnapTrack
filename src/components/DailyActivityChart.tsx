@@ -13,7 +13,7 @@ import {
   Legend
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { format, parseISO, startOfDay, getHours } from 'date-fns';
+import { format, parseISO, startOfDay, getHours, setHours, setMinutes } from 'date-fns'; // Added setHours, setMinutes
 
 interface DailyActivityChartProps {
   jobs: Job[];
@@ -52,8 +52,11 @@ const DailyActivityChart: React.FC<DailyActivityChartProps> = ({ jobs }) => {
       .map(date => ({ date, count: dailyCounts[date] }));
 
     const sortedHourlyData: HourlyActivityData[] = Array.from({ length: 24 }, (_, i) => {
-      const hour = String(i).padStart(2, '0');
-      return { hour: `${hour}:00`, count: hourlyCounts[hour] || 0 };
+      const hour24 = String(i).padStart(2, '0');
+      // Create a dummy date to format the hour correctly to AM/PM
+      const dummyDate = setMinutes(setHours(new Date(), i), 0);
+      const hour12 = format(dummyDate, 'h:mm a');
+      return { hour: hour12, count: hourlyCounts[hour24] || 0 };
     });
 
     return { dailyActivityData: sortedDailyData, hourlyActivityData: sortedHourlyData };
