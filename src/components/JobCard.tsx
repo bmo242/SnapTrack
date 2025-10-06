@@ -22,6 +22,7 @@ import EditJobForm from './EditJobForm';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { getCategoryColor } from '@/lib/category-colors'; // Import the new utility
 
 interface JobCardProps {
   job: Job;
@@ -111,6 +112,8 @@ const JobCard: React.FC<JobCardProps> = ({
     }
   };
 
+  const categoryColor = getCategoryColor(job.category);
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -176,7 +179,9 @@ const JobCard: React.FC<JobCardProps> = ({
           <div className="mt-2 text-sm text-muted-foreground flex flex-col space-y-1">
             {job.category && (
               <div className="flex items-center">
-                <span className="font-semibold mr-1">Category:</span> {job.category}
+                <span className="font-semibold mr-1">Category:</span>
+                <span className={cn("w-3 h-3 rounded-full mr-1", categoryColor)}></span> {/* Color dot */}
+                {job.category}
               </div>
             )}
             {job.startDate && (
