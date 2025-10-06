@@ -135,7 +135,7 @@ const App = () => {
         <TooltipProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Overview jobs={jobs} user={user} onUpdateUser={handleUpdateUser} />} />
+              <Route path="/" element={<Overview jobs={jobs} user={user} onUpdateUser={handleUpdateUser} onAddJob={handleAddJob} />} />
               <Route
                 path="/jobs"
                 element={

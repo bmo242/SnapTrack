@@ -13,14 +13,15 @@ interface OverviewProps {
   jobs: Job[];
   user: User; // Add user prop
   onUpdateUser: (updatedUser: User) => void; // Add onUpdateUser prop
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void; // Add onAddJob prop
 }
 
-const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser }) => {
+const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser, onAddJob }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   return (
       <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground">
-        <Header onAddJob={() => {}} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={false} />
+        <Header onAddJob={onAddJob} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={true} /> {/* Changed showAddJobButton to true and passed onAddJob */}
         <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
 
         <div className="w-full space-y-6 px-4">
