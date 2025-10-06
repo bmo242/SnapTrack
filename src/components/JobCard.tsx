@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
 import { PlusCircle, CalendarIcon, Edit, Trash2 } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, differenceInDays, isPast, isToday } from 'date-fns';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import EditJobForm from './EditJobForm';
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"; // Import Tooltip components
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress"; // Import Progress component
 
 interface JobCardProps {
   job: Job;
@@ -48,15 +49,56 @@ const JobCard: React.FC<JobCardProps> = ({
     }
   };
 
+  // Calculate progress percentage
+  const calculateProgress = () => {
+    if (job.todos.length === 0) return 0;
+
+    let completedCount = 0;
+    let totalCountable = 0;
+
+    job.todos.forEach(todo => {
+      if (todo.status !== 'not-needed') { // Exclude 'not-needed' from total countable items
+        totalCountable++;
+        if (todo.status === 'checked') {
+          completedCount++;
+        }
+      }
+    });
+
+    if (totalCountable === 0) return 0; // Avoid division by zero if all are 'not-needed'
+
+    return Math.round((completedCount / totalCountable) * 100);
+  };
+
+  const progress = calculateProgress();
+
+  // Due Date Counter Logic
+  const deadlineDate = job.deadlineDate ? parseISO(job.deadlineDate) : null;
+  const today = new Date();
+  let dueDateMessage = '';
+  let dueDateColorClass = 'text-muted-foreground';
+
+  if (deadlineDate) {
+    const daysLeft = differenceInDays(deadlineDate, today);
+    if (isPast(deadlineDate) && !isToday(deadlineDate)) {
+      dueDateMessage = 'Overdue';
+      dueDateColorClass = 'text-destructive';
+    } else if (isToday(deadlineDate)) {
+      dueDateMessage = 'Due Today';
+    } else {
+      dueDateMessage = `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`;
+    }
+  }
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <div className="flex items-start justify-between gap-2"> {/* Added gap-2 for spacing */}
-          <div className="flex-grow"> {/* Allows title/description to take available space */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-grow">
             <CardTitle>{job.title}</CardTitle>
             <CardDescription>{job.description}</CardDescription>
           </div>
-          <div className="flex space-x-2 flex-shrink-0"> {/* Ensures buttons don't shrink */}
+          <div className="flex space-x-2 flex-shrink-0">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -121,6 +163,11 @@ const JobCard: React.FC<JobCardProps> = ({
               <div className="flex items-center">
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 <span>Deadline: {format(parseISO(job.deadlineDate), "PPP")}</span>
+                {dueDateMessage && (
+                  <span className={`ml-2 font-semibold ${dueDateColorClass}`}>
+                    ({dueDateMessage})
+                  </span>
+                )}
               </div>
             )}
           </div>
@@ -128,6 +175,10 @@ const JobCard: React.FC<JobCardProps> = ({
       </CardHeader>
       <CardContent>
         <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>
+        <div className="flex items-center justify-between mb-4">
+          <Progress value={progress} className="w-[calc(100%-60px)]" />
+          <span className="ml-4 text-sm font-medium">{progress}%</span>
+        </div>
         {job.todos.length === 0 ? (
           <p className="text-muted-foreground text-sm mb-2">No to-do items yet. Add some!</p>
         ) : (
