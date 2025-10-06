@@ -15,6 +15,20 @@ export interface Job {
   category: string; // New field for job category
 }
 
+export interface User {
+  id: string;
+  name: string;
+  role: string;
+  avatarUrl: string;
+}
+
+export const defaultUser: User = {
+  id: "user-1",
+  name: "John Doe",
+  role: "Photographer",
+  avatarUrl: "https://github.com/shadcn.png",
+};
+
 export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status'>[] = [
   { title: "Client Communication" },
   { title: "Pre-shoot Planning" },

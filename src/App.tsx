@@ -7,18 +7,19 @@ import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
 import NotFound from "./pages/NotFound";
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
+import { useUserPersistence } from '@/hooks/use-user-persistence'; // Import the new user persistence hook
 import { v4 as uuidv4 } from 'uuid';
-import { Job, TodoItem, defaultTodoTemplates } from '@/types';
+import { Job, TodoItem, defaultTodoTemplates, User } from '@/types';
 import Header from "./components/Header";
 import MobileNav from "./components/MobileNav";
 import { useState } from "react";
-// import CalendarPage from "./pages/CalendarPage"; // Removed CalendarPage import
+import { ThemeProvider } from "@/components/theme-provider"; // Import ThemeProvider
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [jobs, setJobs] = useJobsPersistence();
-  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [user, setUser] = useUserPersistence(); // Initialize user state
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
     const newJob: Job = {
@@ -120,34 +121,40 @@ const App = () => {
     );
   };
 
+  const handleUpdateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <Sonner />
-      <TooltipProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Overview jobs={jobs} />} />
-            <Route
-              path="/jobs"
-              element={
-                <JobsPage
-                  jobs={jobs}
-                  onAddJob={handleAddJob}
-                  onDeleteJob={handleDeleteJob}
-                  onUpdateJob={handleUpdateJob}
-                  onToggleTodo={handleToggleTodo}
-                  onAddTemplatedTodos={handleAddTemplatedTodos}
-                  onAddCustomTodo={handleAddCustomTodo}
-                />
-              }
-            />
-            {/* Removed the calendar route */}
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme"> {/* Add ThemeProvider */}
+        <Toaster />
+        <Sonner />
+        <TooltipProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Overview jobs={jobs} user={user} onUpdateUser={handleUpdateUser} />} />
+              <Route
+                path="/jobs"
+                element={
+                  <JobsPage
+                    jobs={jobs}
+                    onAddJob={handleAddJob}
+                    onDeleteJob={handleDeleteJob}
+                    onUpdateJob={handleUpdateJob}
+                    onToggleTodo={handleToggleTodo}
+                    onAddTemplatedTodos={handleAddTemplatedTodos}
+                    onAddCustomTodo={handleAddCustomTodo}
+                  />
+                }
+              />
+              {/* Removed the calendar route */}
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

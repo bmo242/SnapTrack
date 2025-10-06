@@ -3,35 +3,34 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import UserProfileHeader from '@/components/UserProfileHeader';
 import TaskSummary from '@/components/TaskSummary';
 import ActiveProjectsCarousel from '@/components/ActiveProjectsCarousel';
-import { Job } from '@/types';
+import { Job, User } from '@/types'; // Import User type
 import { Separator } from '@/components/ui/separator';
 import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
 import { useState } from 'react';
-// import MobileOnlyWrapper from '@/components/MobileOnlyWrapper'; // Removed MobileOnlyWrapper import
 
 interface OverviewProps {
   jobs: Job[];
+  user: User; // Add user prop
+  onUpdateUser: (updatedUser: User) => void; // Add onUpdateUser prop
 }
 
-const Overview: React.FC<OverviewProps> = ({ jobs }) => {
+const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   return (
-    // <MobileOnlyWrapper> {/* Removed MobileOnlyWrapper here */}
       <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground">
         <Header onAddJob={() => {}} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={false} />
         <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
 
         <div className="w-full space-y-6 px-4">
-          <UserProfileHeader />
+          <UserProfileHeader user={user} onUpdateUser={onUpdateUser} /> {/* Pass user and onUpdateUser */}
           <TaskSummary jobs={jobs} />
           <Separator />
           <ActiveProjectsCarousel jobs={jobs} />
         </div>
         <MadeWithDyad />
       </div>
-    // </MobileOnlyWrapper>
   );
 };
 
