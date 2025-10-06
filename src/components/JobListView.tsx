@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Job } from '@/types';
 import { format, parseISO, parse } from 'date-fns'; // Import parse
-import { Briefcase, CalendarIcon, Clock } from 'lucide-react';
+import { Briefcase, Clock } from 'lucide-react'; // Removed CalendarIcon
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 
@@ -60,33 +60,26 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
         sortedAndGroupedJobs.map((group) => (
           <div key={group.date} className="mb-6">
             <h3 className="text-xl font-semibold mb-3 flex items-center">
-              <CalendarIcon className="mr-2 h-5 w-5 text-primary" />
+              <Briefcase className="mr-2 h-5 w-5 text-primary" /> {/* Changed to Briefcase icon for consistency */}
               {format(parseISO(group.date), 'PPP')}
             </h3>
             <Separator className="mb-4" />
-            <div className="space-y-4">
+            <div className="space-y-2"> {/* Reduced space-y for a more compact list */}
               {group.jobs.map((job) => (
                 <Button
                   key={job.id}
                   variant="outline"
-                  className="w-full h-auto p-4 flex flex-col items-start text-left"
+                  className="w-full h-auto p-3 flex items-center justify-between text-left" // Adjusted padding and layout
                   onClick={() => onSelectJob(job)}
                 >
-                  <div className="flex items-center mb-1">
-                    <Briefcase className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <p className="font-medium text-base">{job.title}</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-6">{job.description}</p>
-                  {job.category && (
-                    <p className="text-xs text-muted-foreground ml-6 mt-1">Category: {job.category}</p>
-                  )}
+                  <p className="font-medium text-base">{job.title}</p>
                   {(job.startTime || job.endTime) && (
-                    <div className="flex items-center text-xs text-muted-foreground ml-6 mt-1">
+                    <div className="flex items-center text-sm text-muted-foreground ml-auto"> {/* Moved to ml-auto for right alignment */}
                       <Clock className="mr-1 h-3 w-3" />
                       <span>
-                        {job.startTime && `Start: ${formatTime(job.startTime)}`}
+                        {job.startTime && `${formatTime(job.startTime)}`}
                         {job.startTime && job.endTime && ` - `}
-                        {job.endTime && `End: ${formatTime(job.endTime)}`}
+                        {job.endTime && `${formatTime(job.endTime)}`}
                       </span>
                     </div>
                   )}

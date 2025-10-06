@@ -221,7 +221,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
                     key={`${event.job.id}-${event.type}`}
                     className="p-3 border rounded-md hover:bg-muted/50 cursor-pointer flex items-center justify-between space-x-3"
                     onClick={() => {
-                      onSelectJob(event.job);
+                      onSelectJob(event.job); // Pass the full job object
                       setIsJobDetailsDialogOpen(false);
                     }}
                   >

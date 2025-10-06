@@ -6,10 +6,11 @@ import CalendarView from '@/components/CalendarView';
 import JobListView from '@/components/JobListView'; // Import the new JobListView
 import { Job } from '@/types';
 import { Separator } from '@/components/ui/separator';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { CalendarDays, List } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"; // Import Dialog components
+import JobQuickView from '@/components/JobQuickView'; // Import the new JobQuickView component
 
 interface CalendarPageProps {
   jobs: Job[];
@@ -18,12 +19,13 @@ interface CalendarPageProps {
 
 const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar'); // New state for view mode
-  const navigate = useNavigate();
+  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false); // State for quick view dialog
+  const [selectedJobForQuickView, setSelectedJobForQuickView] = useState<Job | null>(null); // State for selected job
 
   const handleSelectJob = (job: Job) => {
-    toast.info(`Navigating to job: ${job.title}`);
-    navigate('/jobs');
+    setSelectedJobForQuickView(job);
+    setIsQuickViewOpen(true);
   };
 
   return (
@@ -58,6 +60,16 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob }) => {
 
       <Separator className="my-8 w-full px-4" />
       <MadeWithDyad />
+
+      {/* Job Quick View Dialog */}
+      <Dialog open={isQuickViewOpen} onOpenChange={setIsQuickViewOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Job Details</DialogTitle>
+          </DialogHeader>
+          {selectedJobForQuickView && <JobQuickView job={selectedJobForQuickView} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
