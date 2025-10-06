@@ -29,7 +29,7 @@ export const defaultUser: User = {
   id: "user-1",
   name: "John Doe",
   role: "Photographer",
-  avatarUrl: "https://github.com/shadcn.png",
+  avatarUrl: "https://cdn.vectorstock.com/i/500p/05/27/user-icon-silhouette-head-and-body-vector-59820527.jpg",
 };
 
 export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status' | 'completedAt'>[] = [

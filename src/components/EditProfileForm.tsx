@@ -29,7 +29,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ currentUser, onUpdate
         ...currentUser,
         name: name.trim(),
         role: role.trim(),
-        avatarUrl: avatarUrl.trim() || "https://github.com/shadcn.png", // Fallback avatar
+        avatarUrl: avatarUrl.trim() || "https://cdn.vectorstock.com/i/500p/05/27/user-icon-silhouette-head-and-body-vector-59820527.jpg", // Fallback avatar
       };
       onUpdateUser(updatedUser);
       toast.success("Profile updated successfully!");
