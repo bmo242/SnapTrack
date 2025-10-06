@@ -51,7 +51,7 @@ const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs, o
           <p className="text-muted-foreground text-center py-4">No active projects.</p>
         ) : (
           <ScrollArea className="w-full whitespace-nowrap pb-4">
-            <div className="flex space-x-4">
+            <div className={cn("flex space-x-4", activeJobs.length === 1 && "justify-center")}> {/* Added justify-center for single item */}
               {activeJobs.map((job) => {
                 const progress = calculateProgress(job);
                 const progressBarColorClass = getProgressBarColorClass(progress);
