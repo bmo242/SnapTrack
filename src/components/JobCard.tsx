@@ -42,7 +42,7 @@ const JobCard: React.FC<JobCardProps> = ({
 }) => {
   const [customTodoTitle, setCustomTodoTitle] = useState('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true); // State for collapsible
+  const [isCollapsed, setIsCollapsed] = useState(false); // Changed to false to load expanded
 
   const handleCustomTodoSubmit = () => {
     if (customTodoTitle.trim()) {
