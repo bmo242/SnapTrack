@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,17 +13,23 @@ import { defaultCategories } from '@/types';
 
 interface AddJobFormProps {
   onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void;
+  initialStartDate?: Date | null; // New prop for initial start date
 }
 
-const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob }) => {
+const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [startDate, setStartDate] = useState<Date | undefined>(initialStartDate || undefined); // Initialize with prop
   const [deadlineDate, setDeadlineDate] = useState<Date | undefined>(undefined);
-  const [startTime, setStartTime] = useState(''); // New state for start time
-  const [endTime, setEndTime] = useState('');     // New state for end time
-  const [category, setCategory] = useState(defaultCategories[0]); // Default to first category
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [category, setCategory] = useState(defaultCategories[0]);
   const [customCategory, setCustomCategory] = useState('');
+
+  // Update startDate if initialStartDate prop changes
+  useEffect(() => {
+    setStartDate(initialStartDate || undefined);
+  }, [initialStartDate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,16 +40,16 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob }) => {
         description,
         startDate ? format(startDate, "yyyy-MM-dd") : undefined,
         deadlineDate ? format(deadlineDate, "yyyy-MM-dd") : undefined,
-        startTime.trim() || undefined, // Pass start time
-        endTime.trim() || undefined,   // Pass end time
-        finalCategory || "Uncategorized" // Ensure a category is always set
+        startTime.trim() || undefined,
+        endTime.trim() || undefined,
+        finalCategory || "Uncategorized"
       );
       setTitle('');
       setDescription('');
-      setStartDate(undefined);
+      setStartDate(initialStartDate || undefined); // Reset to initialStartDate or undefined
       setDeadlineDate(undefined);
-      setStartTime(''); // Reset start time
-      setEndTime('');   // Reset end time
+      setStartTime('');
+      setEndTime('');
       setCategory(defaultCategories[0]);
       setCustomCategory('');
     }

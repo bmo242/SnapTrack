@@ -50,7 +50,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob }) => {
         </div>
 
         {viewMode === 'calendar' ? (
-          <CalendarView jobs={jobs} onSelectJob={handleSelectJob} />
+          <CalendarView jobs={jobs} onSelectJob={handleSelectJob} onAddJob={onAddJob} />
         ) : (
           <JobListView jobs={jobs} onSelectJob={handleSelectJob} />
         )}

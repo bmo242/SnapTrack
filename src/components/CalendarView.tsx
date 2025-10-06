@@ -11,10 +11,10 @@ import {
   isSameDay,
   addDays,
   isToday,
-  parse, // Import parse
+  parse,
 } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Briefcase } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Briefcase, PlusCircle } from 'lucide-react';
 import { Job } from '@/types';
 import { cn } from '@/lib/utils';
 import {
@@ -23,18 +23,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter, // Import DialogFooter
+  DialogTrigger, // Import DialogTrigger
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import AddJobForm from './AddJobForm'; // Import AddJobForm
 
 interface CalendarViewProps {
   jobs: Job[];
   onSelectJob: (job: Job) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void; // Add onAddJob prop
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isJobDetailsDialogOpen, setIsJobDetailsDialogOpen] = useState(false);
+  const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false); // New state for Add Event dialog
   const [selectedDayJobs, setSelectedDayJobs] = useState<Job[]>([]);
 
   const headerFormat = 'MMMM yyyy';
@@ -92,6 +97,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob }) => {
     const jobsForDay = jobsByDate.get(dateKey) || [];
     setSelectedDayJobs(jobsForDay);
     setIsJobDetailsDialogOpen(true);
+  };
+
+  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => {
+    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category);
+    setIsAddEventDialogOpen(false); // Close the Add Event dialog
+    setIsJobDetailsDialogOpen(false); // Also close the job details dialog
   };
 
   const formatTime = (timeString?: string) => {
@@ -185,6 +196,24 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob }) => {
               ))}
             </div>
           </ScrollArea>
+          <DialogFooter className="mt-4">
+            <Dialog open={isAddEventDialogOpen} onOpenChange={setIsAddEventDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full">
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add an Event
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Add New Job for {selectedDate ? format(selectedDate, 'PPP') : ''}</DialogTitle>
+                </DialogHeader>
+                <AddJobForm
+                  onAddJob={handleAddJobAndClose}
+                  initialStartDate={selectedDate} // Pass the selected date
+                />
+              </DialogContent>
+            </Dialog>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
