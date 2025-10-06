@@ -6,19 +6,19 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
 import NotFound from "./pages/NotFound";
-import MobileOnlyWrapper from "./components/MobileOnlyWrapper";
+// import MobileOnlyWrapper from "./components/MobileOnlyWrapper"; // Removed MobileOnlyWrapper
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { v4 as uuidv4 } from 'uuid';
 import { Job, TodoItem, defaultTodoTemplates } from '@/types';
-import Header from "./components/Header"; // Import Header
-import MobileNav from "./components/MobileNav"; // Import MobileNav
-import { useState } from "react"; // Import useState
+import Header from "./components/Header";
+import MobileNav from "./components/MobileNav";
+import { useState } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [jobs, setJobs] = useJobsPersistence();
-  const [isNavOpen, setIsNavOpen] = useState(false); // State for mobile nav
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
     const newJob: Job = {
@@ -125,29 +125,28 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <MobileOnlyWrapper>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Overview jobs={jobs} />} />
-              <Route
-                path="/jobs"
-                element={
-                  <JobsPage
-                    jobs={jobs}
-                    onAddJob={handleAddJob}
-                    onDeleteJob={handleDeleteJob}
-                    onUpdateJob={handleUpdateJob}
-                    onToggleTodo={handleToggleTodo}
-                    onAddTemplatedTodos={handleAddTemplatedTodos}
-                    onAddCustomTodo={handleAddCustomTodo}
-                  />
-                }
-              />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </MobileOnlyWrapper>
+        {/* MobileOnlyWrapper removed */}
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Overview jobs={jobs} />} />
+            <Route
+              path="/jobs"
+              element={
+                <JobsPage
+                  jobs={jobs}
+                  onAddJob={handleAddJob}
+                  onDeleteJob={handleDeleteJob}
+                  onUpdateJob={handleUpdateJob}
+                  onToggleTodo={handleToggleTodo}
+                  onAddTemplatedTodos={handleAddTemplatedTodos}
+                  onAddCustomTodo={handleAddCustomTodo}
+                />
+              }
+            />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
