@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Home, Briefcase, CalendarDays } from 'lucide-react'; // Import CalendarDays icon
+import { Home, Briefcase } from 'lucide-react'; // Removed CalendarDays icon
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -29,12 +29,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
               My Jobs
             </Link>
           </Button>
-          <Button asChild variant="ghost" className="justify-start text-lg h-12"> {/* New link */}
-            <Link to="/calendar" onClick={onClose}>
-              <CalendarDays className="mr-3 h-5 w-5" />
-              Calendar View
-            </Link>
-          </Button>
+          {/* Removed Calendar View link */}
           {/* Add more navigation links here if needed */}
         </nav>
       </SheetContent>

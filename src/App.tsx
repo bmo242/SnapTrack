@@ -12,7 +12,7 @@ import { Job, TodoItem, defaultTodoTemplates } from '@/types';
 import Header from "./components/Header";
 import MobileNav from "./components/MobileNav";
 import { useState } from "react";
-import CalendarPage from "./pages/CalendarPage";
+// import CalendarPage from "./pages/CalendarPage"; // Removed CalendarPage import
 
 const queryClient = new QueryClient();
 
@@ -122,8 +122,8 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster /> {/* Moved Toaster outside TooltipProvider */}
-      <Sonner /> {/* Moved Sonner outside TooltipProvider */}
+      <Toaster />
+      <Sonner />
       <TooltipProvider>
         <BrowserRouter>
           <Routes>
@@ -142,7 +142,7 @@ const App = () => {
                 />
               }
             />
-            <Route path="/calendar" element={<CalendarPage jobs={jobs} />} />
+            {/* Removed the calendar route */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
