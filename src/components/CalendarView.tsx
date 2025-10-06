@@ -35,12 +35,18 @@ interface CalendarViewProps {
   onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void; // Add onAddJob prop
 }
 
+// Define a type for the job events to include the type of event (start/deadline)
+interface JobEvent {
+  job: Job;
+  type: 'start' | 'deadline';
+}
+
 const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isJobDetailsDialogOpen, setIsJobDetailsDialogOpen] = useState(false);
   const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false); // New state for Add Event dialog
-  const [selectedDayJobs, setSelectedDayJobs] = useState<Job[]>([]);
+  const [selectedDayEvents, setSelectedDayEvents] = useState<JobEvent[]>([]); // Changed to JobEvent[]
 
   const headerFormat = 'MMMM yyyy';
   const dateFormat = 'd';
@@ -71,21 +77,21 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
   }, [currentMonth]);
 
   const jobsByDate = useMemo(() => {
-    const map = new Map<string, Job[]>();
+    const map = new Map<string, JobEvent[]>(); // Map stores JobEvent[]
     jobs.forEach(job => {
       if (job.startDate) {
         const dateKey = format(new Date(job.startDate), 'yyyy-MM-dd');
         if (!map.has(dateKey)) {
           map.set(dateKey, []);
         }
-        map.get(dateKey)?.push(job);
+        map.get(dateKey)?.push({ job, type: 'start' });
       }
       if (job.deadlineDate && job.startDate !== job.deadlineDate) { // Also show on deadline if different
         const dateKey = format(new Date(job.deadlineDate), 'yyyy-MM-dd');
         if (!map.has(dateKey)) {
           map.set(dateKey, []);
         }
-        map.get(dateKey)?.push(job);
+        map.get(dateKey)?.push({ job, type: 'deadline' });
       }
     });
     return map;
@@ -94,8 +100,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
   const handleDayClick = (day: Date) => {
     setSelectedDate(day);
     const dateKey = format(day, 'yyyy-MM-dd');
-    const jobsForDay = jobsByDate.get(dateKey) || [];
-    setSelectedDayJobs(jobsForDay);
+    const eventsForDay = jobsByDate.get(dateKey) || [];
+    setSelectedDayEvents(eventsForDay); // Set selectedDayEvents
     setIsJobDetailsDialogOpen(true);
   };
 
@@ -166,29 +172,31 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
           <DialogHeader>
             <DialogTitle>Jobs on {selectedDate ? format(selectedDate, 'PPP') : ''}</DialogTitle>
             <DialogDescription>
-              {selectedDayJobs.length > 0 ? "Here are the jobs scheduled for this day." : "No jobs scheduled for this day."}
+              {selectedDayEvents.length > 0 ? "Here are the jobs scheduled for this day." : "No jobs scheduled for this day."}
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[300px] pr-4">
             <div className="space-y-3">
-              {selectedDayJobs.map((job) => (
+              {selectedDayEvents.map((event) => ( // Iterate over selectedDayEvents
                 <div
-                  key={job.id}
+                  key={`${event.job.id}-${event.type}`} // Unique key for each event type
                   className="p-3 border rounded-md hover:bg-muted/50 cursor-pointer flex items-center space-x-3"
                   onClick={() => {
-                    onSelectJob(job);
+                    onSelectJob(event.job); // Pass the job object
                     setIsJobDetailsDialogOpen(false);
                   }}
                 >
                   <Briefcase className="h-5 w-5 text-primary" />
                   <div>
-                    <p className="font-semibold text-base">{job.title}</p>
-                    <p className="text-sm text-muted-foreground">{job.category}</p>
-                    {(job.startTime || job.endTime) && (
+                    <p className="font-semibold text-base">
+                      {event.job.title} <span className="text-xs text-muted-foreground ml-1">({event.type === 'start' ? 'Start Date' : 'Deadline'})</span>
+                    </p>
+                    <p className="text-sm text-muted-foreground">{event.job.category}</p>
+                    {(event.job.startTime || event.job.endTime) && (
                       <p className="text-xs text-muted-foreground">
-                        {job.startTime && `Start: ${formatTime(job.startTime)}`}
-                        {job.startTime && job.endTime && ` - `}
-                        {job.endTime && `End: ${formatTime(job.endTime)}`}
+                        {event.job.startTime && `Start: ${formatTime(event.job.startTime)}`}
+                        {event.job.startTime && event.job.endTime && ` - `}
+                        {event.job.endTime && `End: ${formatTime(event.job.endTime)}`}
                       </p>
                     )}
                   </div>
