@@ -5,10 +5,10 @@ import Header from '@/components/Header';
 import JobCard from '@/components/JobCard';
 import { v4 as uuidv4 } from 'uuid';
 import { Separator } from '@/components/ui/separator';
-import { useJobsPersistence } from '@/hooks/use-jobs-persistence'; // Import the new hook
+import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 
 const Index = () => {
-  const [jobs, setJobs] = useJobsPersistence(); // Use the custom hook here
+  const [jobs, setJobs] = useJobsPersistence();
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string) => {
     const newJob: Job = {
@@ -99,6 +99,16 @@ const Index = () => {
     );
   };
 
+  const handleEditJob = (updatedJob: Job) => {
+    setJobs((prevJobs) =>
+      prevJobs.map((job) => (job.id === updatedJob.id ? updatedJob : job))
+    );
+  };
+
+  const handleDeleteJob = (jobId: string) => {
+    setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-900 text-foreground">
       <Header onAddJob={handleAddJob} />
@@ -118,6 +128,8 @@ const Index = () => {
               onToggleTodo={handleToggleTodo}
               onAddTemplatedTodos={handleAddTemplatedTodos}
               onAddCustomTodo={handleAddCustomTodo}
+              onEditJob={handleEditJob}
+              onDeleteJob={handleDeleteJob}
             />
           ))
         )}
