@@ -64,7 +64,7 @@ const JobsPage: React.FC<JobsPageProps> = ({
 
         <Separator className="my-8 w-full px-4" />
 
-        <div className="grid grid-cols-1 gap-6 w-full px-4">
+        <div className="container mx-auto grid grid-cols-1 gap-6 px-4">
           {filteredJobs.length === 0 ? (
             <p className="text-center text-lg text-muted-foreground col-span-full">
               {selectedCategory === "All"

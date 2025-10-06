@@ -112,7 +112,7 @@ const JobCard: React.FC<JobCardProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full">
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <div className="flex-grow">
