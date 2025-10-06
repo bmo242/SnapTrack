@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import AddJobForm from './AddJobForm';
+import { Menu } from 'lucide-react'; // Import Menu icon
 
 interface HeaderProps {
   onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => void;
+  onOpenNav: () => void; // New prop to open mobile nav
 }
 
-const Header: React.FC<HeaderProps> = ({ onAddJob }) => {
+const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
@@ -16,11 +18,15 @@ const Header: React.FC<HeaderProps> = ({ onAddJob }) => {
   };
 
   return (
-    <header className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-between mb-8 p-4 bg-card rounded-lg shadow-sm">
-      <h1 className="text-4xl font-bold text-primary mb-4 sm:mb-0">SnapTrack</h1>
+    <header className="w-full max-w-md flex items-center justify-between mb-8 p-4 bg-card rounded-lg shadow-sm">
+      <Button variant="ghost" size="icon" onClick={onOpenNav} className="sm:hidden"> {/* Only show on small screens */}
+        <Menu className="h-6 w-6" />
+        <span className="sr-only">Open navigation</span>
+      </Button>
+      <h1 className="text-3xl font-bold text-primary flex-grow text-center sm:text-left">SnapTrack</h1>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
-          <Button size="lg" className="w-full sm:w-auto">Add New Job</Button>
+          <Button size="sm" className="ml-auto">Add Job</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
