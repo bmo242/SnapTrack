@@ -10,7 +10,7 @@ import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 const Index = () => {
   const [jobs, setJobs] = useJobsPersistence();
 
-  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string) => {
+  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
     const newJob: Job = {
       id: uuidv4(),
       title,
@@ -19,6 +19,7 @@ const Index = () => {
       startDate,
       deadlineDate,
       templatedTodosAdded: false,
+      category: category || "Uncategorized", // Assign category
     };
     setJobs((prevJobs) => [...prevJobs, newJob]);
   };
@@ -128,8 +129,8 @@ const Index = () => {
               onToggleTodo={handleToggleTodo}
               onAddTemplatedTodos={handleAddTemplatedTodos}
               onAddCustomTodo={handleAddCustomTodo}
-              onDeleteJob={handleDeleteJob} // Pass delete handler
-              onUpdateJob={handleUpdateJob} // Pass update handler
+              onDeleteJob={handleDeleteJob}
+              onUpdateJob={handleUpdateJob}
             />
           ))
         )}

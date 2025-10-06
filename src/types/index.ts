@@ -12,6 +12,7 @@ export interface Job {
   startDate?: string; // Added for start date
   deadlineDate?: string; // Added for deadline date
   templatedTodosAdded?: boolean; // New flag to track if templated todos have been added
+  category: string; // New field for job category
 }
 
 export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status'>[] = [
@@ -27,4 +28,13 @@ export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status'>[] = [
   { title: "Final Deliverables" },
   { title: "Invoicing" },
   { title: "Backup Files" },
+];
+
+export const defaultCategories = [
+  "Food Photography",
+  "Corporate Portraits",
+  "Commercial Photography",
+  "Weddings",
+  "Product Photography",
+  "Other", // Option for custom categories
 ];

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
-import { PlusCircle, CalendarIcon, Edit, Trash2 } from 'lucide-react';
+import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { format, parseISO, differenceInDays, isPast, isToday } from 'date-fns';
 import {
   AlertDialog,
@@ -20,7 +20,8 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import EditJobForm from './EditJobForm';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress"; // Import Progress component
+import { Progress } from "@/components/ui/progress";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"; // Import Collapsible components
 
 interface JobCardProps {
   job: Job;
@@ -41,6 +42,7 @@ const JobCard: React.FC<JobCardProps> = ({
 }) => {
   const [customTodoTitle, setCustomTodoTitle] = useState('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true); // State for collapsible
 
   const handleCustomTodoSubmit = () => {
     if (customTodoTitle.trim()) {
@@ -71,6 +73,17 @@ const JobCard: React.FC<JobCardProps> = ({
   };
 
   const progress = calculateProgress();
+
+  // Determine progress bar color
+  const getProgressBarColorClass = (progressValue: number) => {
+    if (progressValue === 100) return 'bg-green-500';
+    if (progressValue >= 75) return 'bg-blue-500';
+    if (progressValue >= 50) return 'bg-yellow-500';
+    if (progressValue >= 25) return 'bg-orange-500';
+    return 'bg-red-500';
+  };
+
+  const progressBarColorClass = getProgressBarColorClass(progress);
 
   // Due Date Counter Logic
   const deadlineDate = job.deadlineDate ? parseISO(job.deadlineDate) : null;
@@ -151,8 +164,13 @@ const JobCard: React.FC<JobCardProps> = ({
             </Tooltip>
           </div>
         </div>
-        {(job.startDate || job.deadlineDate) && (
+        {(job.startDate || job.deadlineDate || job.category) && (
           <div className="mt-2 text-sm text-muted-foreground flex flex-col space-y-1">
+            {job.category && (
+              <div className="flex items-center">
+                <span className="font-semibold mr-1">Category:</span> {job.category}
+              </div>
+            )}
             {job.startDate && (
               <div className="flex items-center">
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -172,50 +190,64 @@ const JobCard: React.FC<JobCardProps> = ({
             )}
           </div>
         )}
-      </CardHeader>
-      <CardContent>
-        <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>
-        <div className="flex items-center justify-between mb-4">
-          <Progress value={progress} className="w-[calc(100%-60px)]" />
-          <span className="ml-4 text-sm font-medium">{progress}%</span>
-        </div>
-        {job.todos.length === 0 ? (
-          <p className="text-muted-foreground text-sm mb-2">No to-do items yet. Add some!</p>
-        ) : (
-          <div className="space-y-1 mb-4">
-            {job.todos.map((todo) => (
-              <TodoItem key={todo.id} todo={todo} onToggle={(todoId) => onToggleTodo(job.id, todoId)} />
-            ))}
+        <Collapsible open={!isCollapsed} onOpenChange={setIsCollapsed} className="w-full">
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center w-full">
+                <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
+                <span className="ml-4 text-sm font-medium">{progress}%</span>
+              </div>
+            </div>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
+                {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                <span className="sr-only">Toggle</span>
+              </Button>
+            </CollapsibleTrigger>
           </div>
-        )}
+          <CollapsibleContent>
+            <CardContent className="px-0 pt-4"> {/* Adjusted padding for collapsible content */}
+              <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>
+              {job.todos.length === 0 ? (
+                <p className="text-muted-foreground text-sm mb-2">No to-do items yet. Add some!</p>
+              ) : (
+                <div className="space-y-1 mb-4">
+                  {job.todos.map((todo) => (
+                    <TodoItem key={todo.id} todo={todo} onToggle={(todoId) => onToggleTodo(job.id, todoId)} />
+                  ))}
+                </div>
+              )}
 
-        {!job.templatedTodosAdded ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onAddTemplatedTodos(job.id)}
-            className="w-full mb-2"
-          >
-            <PlusCircle className="mr-2 h-4 w-4" /> Add Project Extras
-          </Button>
-        ) : (
-          <div className="flex space-x-2 mb-2">
-            <Input
-              placeholder="Add custom to-do"
-              value={customTodoTitle}
-              onChange={(e) => setCustomTodoTitle(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleCustomTodoSubmit();
-                }
-              }}
-            />
-            <Button onClick={handleCustomTodoSubmit} size="sm">
-              Add
-            </Button>
-          </div>
-        )}
-      </CardContent>
+              {!job.templatedTodosAdded ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onAddTemplatedTodos(job.id)}
+                  className="w-full mb-2"
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Project Extras
+                </Button>
+              ) : (
+                <div className="flex space-x-2 mb-2">
+                  <Input
+                    placeholder="Add custom to-do"
+                    value={customTodoTitle}
+                    onChange={(e) => setCustomTodoTitle(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCustomTodoSubmit();
+                      }
+                    }}
+                  />
+                  <Button onClick={handleCustomTodoSubmit} size="sm">
+                    Add
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </CardHeader>
     </Card>
   );
 };

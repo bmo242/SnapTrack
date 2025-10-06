@@ -8,7 +8,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { Job } from '@/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Job, defaultCategories } from '@/types';
 
 interface EditJobFormProps {
   job: Job;
@@ -25,23 +26,31 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
   const [deadlineDate, setDeadlineDate] = useState<Date | undefined>(
     job.deadlineDate ? parseISO(job.deadlineDate) : undefined
   );
+  const [category, setCategory] = useState(job.category || defaultCategories[0]);
+  const [customCategory, setCustomCategory] = useState(
+    !defaultCategories.includes(job.category) && job.category !== "Uncategorized" ? job.category : ''
+  );
 
   useEffect(() => {
     setTitle(job.title);
     setDescription(job.description);
     setStartDate(job.startDate ? parseISO(job.startDate) : undefined);
     setDeadlineDate(job.deadlineDate ? parseISO(job.deadlineDate) : undefined);
+    setCategory(defaultCategories.includes(job.category) ? job.category : "Other");
+    setCustomCategory(!defaultCategories.includes(job.category) && job.category !== "Uncategorized" ? job.category : '');
   }, [job]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim()) {
+      const finalCategory = category === "Other" ? customCategory.trim() : category;
       const updatedJob: Job = {
         ...job,
         title,
         description,
         startDate: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
         deadlineDate: deadlineDate ? format(deadlineDate, "yyyy-MM-dd") : undefined,
+        category: finalCategory || "Uncategorized",
       };
       onUpdateJob(updatedJob);
       onClose();
@@ -68,6 +77,30 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Brief description of the job"
         />
+      </div>
+      <div>
+        <Label htmlFor="editJobCategory">Category</Label>
+        <Select onValueChange={setCategory} value={category}>
+          <SelectTrigger id="editJobCategory">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {defaultCategories.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {category === "Other" && (
+          <Input
+            className="mt-2"
+            placeholder="Enter custom category"
+            value={customCategory}
+            onChange={(e) => setCustomCategory(e.target.value)}
+            required
+          />
+        )}
       </div>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
