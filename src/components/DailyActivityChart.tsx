@@ -12,8 +12,7 @@ import {
   Line,
   Legend
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { format, parseISO, startOfDay, getHours, setHours, setMinutes } from 'date-fns'; // Added setHours, setMinutes
+import { format, parseISO, startOfDay, getHours, setHours, setMinutes, subDays, addDays } from 'date-fns'; // Added subDays, addDays
 
 interface DailyActivityChartProps {
   jobs: Job[];
@@ -47,9 +46,17 @@ const DailyActivityChart: React.FC<DailyActivityChartProps> = ({ jobs }) => {
       });
     });
 
-    const sortedDailyData: DailyActivityData[] = Object.keys(dailyCounts)
-      .sort()
-      .map(date => ({ date, count: dailyCounts[date] }));
+    // Generate data for the 7-day window: 3 days before, today, 3 days after
+    const today = startOfDay(new Date());
+    const sevenDayWindow: DailyActivityData[] = [];
+    for (let i = -3; i <= 3; i++) {
+      const date = addDays(today, i);
+      const dateKey = format(date, 'yyyy-MM-dd');
+      sevenDayWindow.push({
+        date: dateKey,
+        count: dailyCounts[dateKey] || 0,
+      });
+    }
 
     const sortedHourlyData: HourlyActivityData[] = Array.from({ length: 24 }, (_, i) => {
       const hour24 = String(i).padStart(2, '0');
@@ -59,7 +66,7 @@ const DailyActivityChart: React.FC<DailyActivityChartProps> = ({ jobs }) => {
       return { hour: hour12, count: hourlyCounts[hour24] || 0 };
     });
 
-    return { dailyActivityData: sortedDailyData, hourlyActivityData: sortedHourlyData };
+    return { dailyActivityData: sevenDayWindow, hourlyActivityData: sortedHourlyData };
   }, [jobs]);
 
   return (
@@ -70,8 +77,8 @@ const DailyActivityChart: React.FC<DailyActivityChartProps> = ({ jobs }) => {
           <CardDescription>Number of tasks completed each day.</CardDescription>
         </CardHeader>
         <CardContent>
-          {dailyActivityData.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">No completed tasks to display daily activity.</p>
+          {dailyActivityData.every(data => data.count === 0) ? (
+            <p className="text-center text-muted-foreground py-8">No completed tasks to display daily activity for this period.</p>
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={dailyActivityData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -124,9 +131,9 @@ const DailyActivityChart: React.FC<DailyActivityChartProps> = ({ jobs }) => {
                 <Line
                   type="monotone"
                   dataKey="count"
-                  stroke="hsl(var(--primary))" // Changed stroke to primary color for better visibility
+                  stroke="hsl(var(--primary))"
                   activeDot={{ r: 8 }}
-                  dot={{ r: 4, strokeWidth: 2, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--primary))' }} // Added dot properties
+                  dot={{ r: 4, strokeWidth: 2, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--primary))' }}
                 />
               </LineChart>
             </ResponsiveContainer>
