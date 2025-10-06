@@ -12,7 +12,8 @@ import {
   Line,
   Legend
 } from 'recharts';
-import { format, parseISO, startOfDay, getHours, setHours, setMinutes, subDays, addDays } from 'date-fns'; // Added subDays, addDays
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Added import for Card components
+import { format, parseISO, startOfDay, getHours, setHours, setMinutes, subDays, addDays } from 'date-fns';
 
 interface DailyActivityChartProps {
   jobs: Job[];
