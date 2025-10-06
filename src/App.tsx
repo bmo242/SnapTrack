@@ -57,22 +57,28 @@ const App = () => {
               todos: job.todos.map((todo) => {
                 if (todo.id === todoId) {
                   let newStatus: TodoItem['status'];
+                  let newCompletedAt: string | undefined = todo.completedAt;
+
                   switch (todo.status) {
                     case 'empty':
                       newStatus = 'checked';
+                      newCompletedAt = new Date().toISOString(); // Set timestamp when checked
                       break;
                     case 'checked':
                       newStatus = 'not-needed';
+                      newCompletedAt = undefined; // Clear timestamp if no longer checked
                       break;
                     case 'not-needed':
                       newStatus = 'unsure';
+                      newCompletedAt = undefined; // Clear timestamp
                       break;
                     case 'unsure':
                     default:
                       newStatus = 'empty';
+                      newCompletedAt = undefined; // Clear timestamp
                       break;
                   }
-                  return { ...todo, status: newStatus };
+                  return { ...todo, status: newStatus, completedAt: newCompletedAt };
                 }
                 return todo;
               }),
@@ -94,6 +100,7 @@ const App = () => {
                   id: uuidv4(),
                   title: template.title,
                   status: 'empty',
+                  completedAt: undefined, // Ensure new templated todos don't have a completedAt
                 })),
               ],
               templatedTodosAdded: true,
@@ -116,6 +123,7 @@ const App = () => {
                   id: uuidv4(),
                   title: todoTitle,
                   status: 'empty',
+                  completedAt: undefined, // Ensure new custom todos don't have a completedAt
                 },
               ],
             }

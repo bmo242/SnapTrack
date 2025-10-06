@@ -2,6 +2,7 @@ export interface TodoItem {
   id: string;
   title: string;
   status: 'empty' | 'checked' | 'not-needed' | 'unsure';
+  completedAt?: string; // New field to store completion timestamp
 }
 
 export interface Job {
@@ -31,7 +32,7 @@ export const defaultUser: User = {
   avatarUrl: "https://github.com/shadcn.png",
 };
 
-export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status'>[] = [
+export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status' | 'completedAt'>[] = [
   { title: "Client Communication" },
   { title: "Pre-shoot Planning" },
   { title: "Equipment Check" },

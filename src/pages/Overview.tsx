@@ -3,6 +3,7 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import UserProfileHeader from '@/components/UserProfileHeader';
 import TaskSummary from '@/components/TaskSummary';
 import ActiveProjectsCarousel from '@/components/ActiveProjectsCarousel';
+import DailyActivityChart from '@/components/DailyActivityChart'; // Import the new chart component
 import { Job, User } from '@/types'; // Import User type
 import { Separator } from '@/components/ui/separator';
 import Header from '@/components/Header';
@@ -29,6 +30,7 @@ const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser, onAddJob 
           <TaskSummary jobs={jobs} />
           <Separator />
           <ActiveProjectsCarousel jobs={jobs} />
+          <DailyActivityChart jobs={jobs} /> {/* Add the new DailyActivityChart */}
         </div>
         <MadeWithDyad />
       </div>

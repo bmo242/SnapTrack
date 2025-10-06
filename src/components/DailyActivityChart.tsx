@@ -1,0 +1,131 @@
+import React, { useMemo } from 'react';
+import { Job } from '@/types';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  Legend
+} from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { format, parseISO, startOfDay, getHours } from 'date-fns';
+
+interface DailyActivityChartProps {
+  jobs: Job[];
+}
+
+interface DailyActivityData {
+  date: string;
+  count: number;
+}
+
+interface HourlyActivityData {
+  hour: string;
+  count: number;
+}
+
+const DailyActivityChart: React.FC<DailyActivityChartProps> = ({ jobs }) => {
+  const { dailyActivityData, hourlyActivityData } = useMemo(() => {
+    const dailyCounts: { [key: string]: number } = {};
+    const hourlyCounts: { [key: string]: number } = {}; // Keys '00', '01', ..., '23'
+
+    jobs.forEach(job => {
+      job.todos.forEach(todo => {
+        if (todo.status === 'checked' && todo.completedAt) {
+          const completedDate = parseISO(todo.completedAt);
+          const dateKey = format(startOfDay(completedDate), 'yyyy-MM-dd');
+          const hourKey = format(completedDate, 'HH');
+
+          dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
+          hourlyCounts[hourKey] = (hourlyCounts[hourKey] || 0) + 1;
+        }
+      });
+    });
+
+    const sortedDailyData: DailyActivityData[] = Object.keys(dailyCounts)
+      .sort()
+      .map(date => ({ date, count: dailyCounts[date] }));
+
+    const sortedHourlyData: HourlyActivityData[] = Array.from({ length: 24 }, (_, i) => {
+      const hour = String(i).padStart(2, '0');
+      return { hour: `${hour}:00`, count: hourlyCounts[hour] || 0 };
+    });
+
+    return { dailyActivityData: sortedDailyData, hourlyActivityData: sortedHourlyData };
+  }, [jobs]);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold">Daily Task Completions</CardTitle>
+          <CardDescription>Number of tasks completed each day.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {dailyActivityData.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No completed tasks to display daily activity.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={dailyActivityData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(value) => format(parseISO(value), 'MMM d')}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                  stroke="hsl(var(--foreground))"
+                />
+                <YAxis allowDecimals={false} stroke="hsl(var(--foreground))" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '0.5rem' }}
+                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  formatter={(value: number, name: string, props: any) => [`${value} tasks`, 'Completed']}
+                  labelFormatter={(label) => `Date: ${format(parseISO(label), 'PPP')}`}
+                />
+                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold">Hourly Activity Distribution</CardTitle>
+          <CardDescription>Distribution of task completions by hour of the day.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {hourlyActivityData.every(data => data.count === 0) ? (
+            <p className="text-center text-muted-foreground py-8">No completed tasks to display hourly activity.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={hourlyActivityData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="hour" stroke="hsl(var(--foreground))" />
+                <YAxis allowDecimals={false} stroke="hsl(var(--foreground))" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '0.5rem' }}
+                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  formatter={(value: number, name: string, props: any) => [`${value} tasks`, 'Completed']}
+                  labelFormatter={(label) => `Hour: ${label}`}
+                />
+                <Legend />
+                <Line type="monotone" dataKey="count" stroke="hsl(var(--accent))" activeDot={{ r: 8 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default DailyActivityChart;
