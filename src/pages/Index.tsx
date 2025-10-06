@@ -1,15 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Job, TodoItem, defaultTodoTemplates } from '@/types';
-import Header from '@/components/Header';
+import Header from '@/components/Header'; // Import the new Header component
 import JobCard from '@/components/JobCard';
 import { v4 as uuidv4 } from 'uuid';
 import { Separator } from '@/components/ui/separator';
-import useLocalStorage from '@/hooks/use-local-storage'; // Import the new hook
 
 const Index = () => {
-  // Use useLocalStorage to persist the jobs array
-  const [jobs, setJobs] = useLocalStorage<Job[]>('snaptrack-jobs', []);
+  const [jobs, setJobs] = useState<Job[]>([]);
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string) => {
     const newJob: Job = {
@@ -19,7 +17,7 @@ const Index = () => {
       todos: [],
       startDate,
       deadlineDate,
-      templatedTodosAdded: false,
+      templatedTodosAdded: false, // Initialize the flag
     };
     setJobs((prevJobs) => [...prevJobs, newJob]);
   };
@@ -72,7 +70,7 @@ const Index = () => {
                   status: 'empty',
                 })),
               ],
-              templatedTodosAdded: true,
+              templatedTodosAdded: true, // Set flag to true after adding
             }
           : job
       )
@@ -102,9 +100,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-900 text-foreground">
-      <Header onAddJob={handleAddJob} />
+      <Header onAddJob={handleAddJob} /> {/* Use the new Header component */}
 
-      <Separator className="my-8 w-full max-w-4xl" />
+      <Separator className="my-8 w-full max-w-4xl" /> {/* Adjusted max-w for separator */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl">
         {jobs.length === 0 ? (
