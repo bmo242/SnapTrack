@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
 import { PlusCircle, CalendarIcon, Edit, Trash2 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,15 +18,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import EditJobForm from './EditJobForm'; // Import the new EditJobForm
+import EditJobForm from './EditJobForm';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"; // Import Tooltip components
 
 interface JobCardProps {
   job: Job;
   onToggleTodo: (jobId: string, todoId: string) => void;
   onAddTemplatedTodos: (jobId: string) => void;
   onAddCustomTodo: (jobId: string, todoTitle: string) => void;
-  onDeleteJob: (jobId: string) => void; // New prop for deleting jobs
-  onUpdateJob: (updatedJob: Job) => void; // New prop for updating jobs
+  onDeleteJob: (jobId: string) => void;
+  onUpdateJob: (updatedJob: Job) => void;
 }
 
 const JobCard: React.FC<JobCardProps> = ({
@@ -50,48 +51,62 @@ const JobCard: React.FC<JobCardProps> = ({
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <div className="flex justify-between items-start">
-          <div>
+        <div className="flex items-start justify-between gap-2"> {/* Added gap-2 for spacing */}
+          <div className="flex-grow"> {/* Allows title/description to take available space */}
             <CardTitle>{job.title}</CardTitle>
             <CardDescription>{job.description}</CardDescription>
           </div>
-          <div className="flex space-x-2">
-            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Edit Job</DialogTitle>
-                </DialogHeader>
-                <EditJobForm job={job} onUpdateJob={onUpdateJob} onClose={() => setIsEditDialogOpen(false)} />
-              </DialogContent>
-            </Dialog>
+          <div className="flex space-x-2 flex-shrink-0"> {/* Ensures buttons don't shrink */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Edit Job</DialogTitle>
+                    </DialogHeader>
+                    <EditJobForm job={job} onUpdateJob={onUpdateJob} onClose={() => setIsEditDialogOpen(false)} />
+                  </DialogContent>
+                </Dialog>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Edit Job</p>
+              </TooltipContent>
+            </Tooltip>
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your job
-                    and all associated to-do items.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => onDeleteJob(job.id)}>
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your job
+                        and all associated to-do items.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => onDeleteJob(job.id)}>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Delete Job</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
         {(job.startDate || job.deadlineDate) && (
