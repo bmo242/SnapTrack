@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
 import NotFound from "./pages/NotFound";
-// import MobileOnlyWrapper from "./components/MobileOnlyWrapper"; // Removed MobileOnlyWrapper
+import MobileOnlyWrapper from "./components/MobileOnlyWrapper"; // Re-added MobileOnlyWrapper
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { v4 as uuidv4 } from 'uuid';
 import { Job, TodoItem, defaultTodoTemplates } from '@/types';
@@ -125,28 +125,29 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        {/* MobileOnlyWrapper removed */}
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Overview jobs={jobs} />} />
-            <Route
-              path="/jobs"
-              element={
-                <JobsPage
-                  jobs={jobs}
-                  onAddJob={handleAddJob}
-                  onDeleteJob={handleDeleteJob}
-                  onUpdateJob={handleUpdateJob}
-                  onToggleTodo={handleToggleTodo}
-                  onAddTemplatedTodos={handleAddTemplatedTodos}
-                  onAddCustomTodo={handleAddCustomTodo}
-                />
-              }
-            />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <MobileOnlyWrapper> {/* MobileOnlyWrapper re-added */}
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Overview jobs={jobs} />} />
+              <Route
+                path="/jobs"
+                element={
+                  <JobsPage
+                    jobs={jobs}
+                    onAddJob={handleAddJob}
+                    onDeleteJob={handleDeleteJob}
+                    onUpdateJob={handleUpdateJob}
+                    onToggleTodo={handleToggleTodo}
+                    onAddTemplatedTodos={handleAddTemplatedTodos}
+                    onAddCustomTodo={handleAddCustomTodo}
+                  />
+                }
+              />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </MobileOnlyWrapper>
       </TooltipProvider>
     </QueryClientProvider>
   );
