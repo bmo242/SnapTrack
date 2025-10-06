@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
+import CalendarPage from "./pages/CalendarPage"; // Import CalendarPage
 import NotFound from "./pages/NotFound";
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { useUserPersistence } from '@/hooks/use-user-persistence'; // Import the new user persistence hook
@@ -150,7 +151,15 @@ const App = () => {
                   />
                 }
               />
-              {/* Removed the calendar route */}
+              <Route
+                path="/calendar"
+                element={
+                  <CalendarPage
+                    jobs={jobs}
+                    onAddJob={handleAddJob}
+                  />
+                }
+              />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
