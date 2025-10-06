@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
-import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock } from 'lucide-react'; // Import Clock icon
+import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock, ListChecks } from 'lucide-react'; // Import Clock and ListChecks icon
 import { format, parseISO, differenceInDays, isPast, isToday } from 'date-fns';
 import {
   AlertDialog,
@@ -51,10 +51,8 @@ const JobCard: React.FC<JobCardProps> = ({
     }
   };
 
-  // Calculate progress percentage
-  const calculateProgress = () => {
-    if (job.todos.length === 0) return 0;
-
+  // Calculate progress percentage and task counts
+  const calculateProgressAndCounts = () => {
     let completedCount = 0;
     let totalCountable = 0;
 
@@ -67,12 +65,11 @@ const JobCard: React.FC<JobCardProps> = ({
       }
     });
 
-    if (totalCountable === 0) return 0; // Avoid division by zero if all are 'not-needed'
-
-    return Math.round((completedCount / totalCountable) * 100);
+    const progress = totalCountable === 0 ? 0 : Math.round((completedCount / totalCountable) * 100);
+    return { completedCount, totalCountable, progress };
   };
 
-  const progress = calculateProgress();
+  const { completedCount, totalCountable, progress } = calculateProgressAndCounts();
 
   // Determine progress bar color
   const getProgressBarColorClass = (progressValue: number) => {
@@ -164,7 +161,7 @@ const JobCard: React.FC<JobCardProps> = ({
             </Tooltip>
           </div>
         </div>
-        {(job.startDate || job.deadlineDate || job.startTime || job.endTime || job.category) && (
+        {(job.startDate || job.deadlineDate || job.startTime || job.endTime || job.category || totalCountable > 0) && (
           <div className="mt-2 text-sm text-muted-foreground flex flex-col space-y-1">
             {job.category && (
               <div className="flex items-center">
@@ -196,6 +193,12 @@ const JobCard: React.FC<JobCardProps> = ({
                   {job.startTime && job.endTime && ` - `}
                   {job.endTime && `End: ${job.endTime}`}
                 </span>
+              </div>
+            )}
+            {totalCountable > 0 && (
+              <div className="flex items-center">
+                <ListChecks className="mr-2 h-4 w-4" />
+                <span>{completedCount} out of {totalCountable} tasks completed</span>
               </div>
             )}
           </div>
