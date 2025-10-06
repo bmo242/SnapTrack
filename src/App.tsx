@@ -6,13 +6,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
 import NotFound from "./pages/NotFound";
-import MobileOnlyWrapper from "./components/MobileOnlyWrapper"; // Re-added MobileOnlyWrapper
+import MobileOnlyWrapper from "./components/MobileOnlyWrapper";
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { v4 as uuidv4 } from 'uuid';
 import { Job, TodoItem, defaultTodoTemplates } from '@/types';
 import Header from "./components/Header";
 import MobileNav from "./components/MobileNav";
 import { useState } from "react";
+import CalendarPage from "./pages/CalendarPage"; // New import
 
 const queryClient = new QueryClient();
 
@@ -125,7 +126,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <MobileOnlyWrapper> {/* MobileOnlyWrapper re-added */}
+        <MobileOnlyWrapper>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Overview jobs={jobs} />} />
@@ -143,6 +144,7 @@ const App = () => {
                   />
                 }
               />
+              <Route path="/calendar" element={<CalendarPage jobs={jobs} />} /> {/* New route */}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
