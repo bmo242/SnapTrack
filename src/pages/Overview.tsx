@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { toast } from 'sonner'; // Import toast for notifications
 
 interface OverviewProps {
   jobs: Job[];
@@ -19,6 +21,18 @@ interface OverviewProps {
 
 const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser, onAddJob }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleSelectJob = (jobId: string) => {
+    // For now, we'll just navigate to the jobs page.
+    // In a more advanced scenario, you might pass the jobId as state or a URL parameter
+    // to highlight the specific job on the /jobs page.
+    const selectedJob = jobs.find(job => job.id === jobId);
+    if (selectedJob) {
+      toast.info(`Navigating to job: ${selectedJob.title}`);
+      navigate('/jobs');
+    }
+  };
 
   return (
       <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground">
@@ -29,7 +43,7 @@ const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser, onAddJob 
           <UserProfileHeader user={user} onUpdateUser={onUpdateUser} /> {/* Pass user and onUpdateUser */}
           <TaskSummary jobs={jobs} />
           <Separator />
-          <ActiveProjectsCarousel jobs={jobs} />
+          <ActiveProjectsCarousel jobs={jobs} onSelectJob={handleSelectJob} /> {/* Pass onSelectJob */}
           <DailyActivityChart jobs={jobs} /> {/* Add the new DailyActivityChart */}
         </div>
         <MadeWithDyad />

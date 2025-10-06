@@ -4,12 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button'; // Import Button component
 
 interface ActiveProjectsCarouselProps {
   jobs: Job[];
+  onSelectJob: (jobId: string) => void; // New prop for handling job selection
 }
 
-const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs }) => {
+const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs, onSelectJob }) => {
   const calculateProgress = (job: Job) => {
     if (job.todos.length === 0) return 0;
 
@@ -58,7 +60,12 @@ const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs })
                 const offset = circumference - (progress / 100) * circumference;
 
                 return (
-                  <div key={job.id} className="flex flex-col items-center justify-center w-28 flex-shrink-0">
+                  <Button
+                    key={job.id}
+                    variant="ghost" // Use ghost variant for a subtle clickable effect
+                    className="flex flex-col items-center justify-center w-28 h-auto p-2 flex-shrink-0"
+                    onClick={() => onSelectJob(job.id)} // Call onSelectJob with job.id
+                  >
                     <div className="relative w-12 h-12 mb-2">
                       <svg className="w-full h-full" viewBox="0 0 48 48">
                         <circle
@@ -94,7 +101,7 @@ const ActiveProjectsCarousel: React.FC<ActiveProjectsCarouselProps> = ({ jobs })
                       </svg>
                     </div>
                     <p className="text-sm font-medium text-center truncate w-full">{job.title}</p>
-                  </div>
+                  </Button>
                 );
               })}
             </div>
