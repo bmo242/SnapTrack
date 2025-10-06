@@ -9,6 +9,7 @@ import OverallProgressCircle from '@/components/OverallProgressCircle';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import MobileNav from '@/components/MobileNav';
+import MobileOnlyWrapper from '@/components/MobileOnlyWrapper'; // Import MobileOnlyWrapper
 
 interface JobsPageProps {
   jobs: Job[];
@@ -37,55 +38,57 @@ const JobsPage: React.FC<JobsPageProps> = ({
     : jobs.filter(job => job.category === selectedCategory);
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground"> {/* Removed p-4 */}
-      <Header onAddJob={onAddJob} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={true} />
-      <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
+    <MobileOnlyWrapper> {/* Added MobileOnlyWrapper here */}
+      <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 text-foreground">
+        <Header onAddJob={onAddJob} onOpenNav={() => setIsNavOpen(true)} showAddJobButton={true} />
+        <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
 
-      <div className="w-full flex flex-col sm:flex-row items-center justify-between mb-8 px-4 py-4 bg-card rounded-lg shadow-sm"> {/* Removed max-w-md, adjusted padding */}
-        <div className="flex-1 mb-4 sm:mb-0 sm:mr-4">
-          <Label htmlFor="categoryFilter" className="sr-only">Filter by Category</Label>
-          <Select onValueChange={setSelectedCategory} value={selectedCategory}>
-            <SelectTrigger id="categoryFilter" className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              {defaultCategories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="w-full flex flex-col sm:flex-row items-center justify-between mb-8 px-4 py-4 bg-card rounded-lg shadow-sm">
+          <div className="flex-1 mb-4 sm:mb-0 sm:mr-4">
+            <Label htmlFor="categoryFilter" className="sr-only">Filter by Category</Label>
+            <Select onValueChange={setSelectedCategory} value={selectedCategory}>
+              <SelectTrigger id="categoryFilter" className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                {defaultCategories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <OverallProgressCircle jobs={jobs} />
         </div>
-        <OverallProgressCircle jobs={jobs} />
+
+        <Separator className="my-8 w-full px-4" />
+
+        <div className="grid grid-cols-1 gap-6 w-full px-4">
+          {filteredJobs.length === 0 ? (
+            <p className="text-center text-lg text-muted-foreground col-span-full">
+              {selectedCategory === "All"
+                ? "No jobs added yet. Click 'Add Job' to get started!"
+                : `No jobs found in the '${selectedCategory}' category.`}
+            </p>
+          ) : (
+            filteredJobs.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                onToggleTodo={onToggleTodo}
+                onAddTemplatedTodos={onAddTemplatedTodos}
+                onAddCustomTodo={onAddCustomTodo}
+                onDeleteJob={onDeleteJob}
+                onUpdateJob={onUpdateJob}
+              />
+            ))
+          )}
+        </div>
+
+        <MadeWithDyad />
       </div>
-
-      <Separator className="my-8 w-full px-4" /> {/* Removed max-w-md, added px-4 */}
-
-      <div className="grid grid-cols-1 gap-6 w-full px-4"> {/* Removed max-w-md, added px-4 */}
-        {filteredJobs.length === 0 ? (
-          <p className="text-center text-lg text-muted-foreground col-span-full">
-            {selectedCategory === "All"
-              ? "No jobs added yet. Click 'Add Job' to get started!"
-              : `No jobs found in the '${selectedCategory}' category.`}
-          </p>
-        ) : (
-          filteredJobs.map((job) => (
-            <JobCard
-              key={job.id}
-              job={job}
-              onToggleTodo={onToggleTodo}
-              onAddTemplatedTodos={onAddTemplatedTodos}
-              onAddCustomTodo={onAddCustomTodo}
-              onDeleteJob={onDeleteJob}
-              onUpdateJob={onUpdateJob}
-            />
-          ))
-        )}
-      </div>
-
-      <MadeWithDyad />
-    </div>
+    </MobileOnlyWrapper>
   );
 };
 
