@@ -26,6 +26,8 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
   const [deadlineDate, setDeadlineDate] = useState<Date | undefined>(
     job.deadlineDate ? parseISO(job.deadlineDate) : undefined
   );
+  const [startTime, setStartTime] = useState(job.startTime || ''); // New state for start time
+  const [endTime, setEndTime] = useState(job.endTime || '');     // New state for end time
   const [category, setCategory] = useState(job.category || defaultCategories[0]);
   const [customCategory, setCustomCategory] = useState(
     !defaultCategories.includes(job.category) && job.category !== "Uncategorized" ? job.category : ''
@@ -36,6 +38,8 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
     setDescription(job.description);
     setStartDate(job.startDate ? parseISO(job.startDate) : undefined);
     setDeadlineDate(job.deadlineDate ? parseISO(job.deadlineDate) : undefined);
+    setStartTime(job.startTime || ''); // Update start time on job change
+    setEndTime(job.endTime || '');     // Update end time on job change
     setCategory(defaultCategories.includes(job.category) ? job.category : "Other");
     setCustomCategory(!defaultCategories.includes(job.category) && job.category !== "Uncategorized" ? job.category : '');
   }, [job]);
@@ -50,6 +54,8 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
         description,
         startDate: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
         deadlineDate: deadlineDate ? format(deadlineDate, "yyyy-MM-dd") : undefined,
+        startTime: startTime.trim() || undefined, // Update start time
+        endTime: endTime.trim() || undefined,     // Update end time
         category: finalCategory || "Uncategorized",
       };
       onUpdateJob(updatedJob);
@@ -152,6 +158,26 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
               />
             </PopoverContent>
           </Popover>
+        </div>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <Label htmlFor="editStartTime">Start Time</Label>
+          <Input
+            id="editStartTime"
+            type="time"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+          />
+        </div>
+        <div className="flex-1">
+          <Label htmlFor="editEndTime">End Time</Label>
+          <Input
+            id="editEndTime"
+            type="time"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+          />
         </div>
       </div>
       <Button type="submit" className="w-full">Save Changes</Button>

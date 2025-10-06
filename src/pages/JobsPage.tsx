@@ -13,7 +13,7 @@ import MobileNav from '@/components/MobileNav';
 
 interface JobsPageProps {
   jobs: Job[];
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void;
   onDeleteJob: (jobId: string) => void;
   onUpdateJob: (updatedJob: Job) => void;
   onToggleTodo: (jobId: string, todoId: string) => void;

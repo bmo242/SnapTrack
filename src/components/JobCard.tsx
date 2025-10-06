@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
 import TodoItem from './TodoItem';
-import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock } from 'lucide-react'; // Import Clock icon
 import { format, parseISO, differenceInDays, isPast, isToday } from 'date-fns';
 import {
   AlertDialog,
@@ -164,7 +164,7 @@ const JobCard: React.FC<JobCardProps> = ({
             </Tooltip>
           </div>
         </div>
-        {(job.startDate || job.deadlineDate || job.category) && (
+        {(job.startDate || job.deadlineDate || job.startTime || job.endTime || job.category) && (
           <div className="mt-2 text-sm text-muted-foreground flex flex-col space-y-1">
             {job.category && (
               <div className="flex items-center">
@@ -186,6 +186,16 @@ const JobCard: React.FC<JobCardProps> = ({
                     ({dueDateMessage})
                   </span>
                 )}
+              </div>
+            )}
+            {(job.startTime || job.endTime) && (
+              <div className="flex items-center">
+                <Clock className="mr-2 h-4 w-4" />
+                <span>
+                  {job.startTime && `Start: ${job.startTime}`}
+                  {job.startTime && job.endTime && ` - `}
+                  {job.endTime && `End: ${job.endTime}`}
+                </span>
               </div>
             )}
           </div>

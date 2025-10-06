@@ -21,7 +21,7 @@ const App = () => {
   const [jobs, setJobs] = useJobsPersistence();
   const [user, setUser] = useUserPersistence(); // Initialize user state
 
-  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
+  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => {
     const newJob: Job = {
       id: uuidv4(),
       title,
@@ -29,6 +29,8 @@ const App = () => {
       todos: [],
       startDate,
       deadlineDate,
+      startTime, // Pass start time
+      endTime,   // Pass end time
       templatedTodosAdded: false,
       category: category || "Uncategorized",
     };

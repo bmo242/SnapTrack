@@ -6,7 +6,7 @@ import { Menu, FilePlus } from 'lucide-react'; // Import FilePlus icon
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"; // Import Tooltip components
 
 interface HeaderProps {
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void;
   onOpenNav: () => void;
   showAddJobButton?: boolean;
 }
@@ -14,8 +14,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton = true }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, category?: string) => {
-    onAddJob(title, description, startDate, deadlineDate, category);
+  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => {
+    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category);
     setIsDialogOpen(false);
   };
 
