@@ -23,19 +23,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter, // Import DialogFooter
-  DialogTrigger, // Import DialogTrigger
+  DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import AddJobForm from './AddJobForm'; // Import AddJobForm
+import AddJobForm from './AddJobForm';
+import { getCategoryColor } from '@/lib/category-colors'; // Import getCategoryColor
 
 interface CalendarViewProps {
   jobs: Job[];
   onSelectJob: (job: Job) => void;
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void; // Add onAddJob prop
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void;
 }
 
-// Define a type for the job events to include the type of event (start/deadline)
 interface JobEvent {
   job: Job;
   type: 'start' | 'deadline';
@@ -45,8 +45,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isJobDetailsDialogOpen, setIsJobDetailsDialogOpen] = useState(false);
-  const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false); // New state for Add Event dialog
-  const [selectedDayEvents, setSelectedDayEvents] = useState<JobEvent[]>([]); // Changed to JobEvent[]
+  const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false);
+  const [selectedDayEvents, setSelectedDayEvents] = useState<JobEvent[]>([]);
 
   const headerFormat = 'MMMM yyyy';
   const dateFormat = 'd';
@@ -77,7 +77,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
   }, [currentMonth]);
 
   const jobsByDate = useMemo(() => {
-    const map = new Map<string, JobEvent[]>(); // Map stores JobEvent[]
+    const map = new Map<string, JobEvent[]>();
     jobs.forEach(job => {
       if (job.startDate) {
         const dateKey = format(new Date(job.startDate), 'yyyy-MM-dd');
@@ -86,7 +86,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
         }
         map.get(dateKey)?.push({ job, type: 'start' });
       }
-      if (job.deadlineDate && job.startDate !== job.deadlineDate) { // Also show on deadline if different
+      if (job.deadlineDate && job.startDate !== job.deadlineDate) {
         const dateKey = format(new Date(job.deadlineDate), 'yyyy-MM-dd');
         if (!map.has(dateKey)) {
           map.set(dateKey, []);
@@ -101,14 +101,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
     setSelectedDate(day);
     const dateKey = format(day, 'yyyy-MM-dd');
     const eventsForDay = jobsByDate.get(dateKey) || [];
-    setSelectedDayEvents(eventsForDay); // Set selectedDayEvents
+    setSelectedDayEvents(eventsForDay);
     setIsJobDetailsDialogOpen(true);
   };
 
   const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => {
     onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category);
-    setIsAddEventDialogOpen(false); // Close the Add Event dialog
-    setIsJobDetailsDialogOpen(false); // Also close the job details dialog
+    setIsAddEventDialogOpen(false);
+    setIsJobDetailsDialogOpen(false);
   };
 
   const formatTime = (timeString?: string) => {
@@ -119,6 +119,35 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
       console.error("Error formatting time:", timeString, error);
       return timeString;
     }
+  };
+
+  // Helper to calculate job progress
+  const calculateProgress = (job: Job) => {
+    if (job.todos.length === 0) return 0;
+
+    let completedCount = 0;
+    let totalCountable = 0;
+
+    job.todos.forEach(todo => {
+      if (todo.status !== 'not-needed') {
+        totalCountable++;
+        if (todo.status === 'checked') {
+          completedCount++;
+        }
+      }
+    });
+
+    if (totalCountable === 0) return 0;
+    return Math.round((completedCount / totalCountable) * 100);
+  };
+
+  // Helper to get progress bar color class
+  const getProgressBarColorClass = (progressValue: number) => {
+    if (progressValue === 100) return 'text-green-500';
+    if (progressValue >= 75) return 'text-blue-500';
+    if (progressValue >= 50) return 'text-yellow-500';
+    if (progressValue >= 25) return 'text-orange-500';
+    return 'text-red-500';
   };
 
   return (
@@ -177,31 +206,83 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
           </DialogHeader>
           <ScrollArea className="h-[300px] pr-4">
             <div className="space-y-3">
-              {selectedDayEvents.map((event) => ( // Iterate over selectedDayEvents
-                <div
-                  key={`${event.job.id}-${event.type}`} // Unique key for each event type
-                  className="p-3 border rounded-md hover:bg-muted/50 cursor-pointer flex items-center space-x-3"
-                  onClick={() => {
-                    onSelectJob(event.job); // Pass the job object
-                    setIsJobDetailsDialogOpen(false);
-                  }}
-                >
-                  <Briefcase className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-semibold text-base">
-                      {event.job.title} <span className="text-xs text-muted-foreground ml-1">({event.type === 'start' ? 'Start Date' : 'Deadline'})</span>
-                    </p>
-                    <p className="text-sm text-muted-foreground">{event.job.category}</p>
-                    {(event.job.startTime || event.job.endTime) && (
-                      <p className="text-xs text-muted-foreground">
-                        {event.job.startTime && `Start: ${formatTime(event.job.startTime)}`}
-                        {event.job.startTime && event.job.endTime && ` - `}
-                        {event.job.endTime && `End: ${formatTime(event.job.endTime)}`}
-                      </p>
-                    )}
+              {selectedDayEvents.map((event) => {
+                const progress = calculateProgress(event.job);
+                const progressBarColorClass = getProgressBarColorClass(progress);
+                const radius = 18;
+                const strokeWidth = 4;
+                const viewBoxSize = 48;
+                const center = viewBoxSize / 2;
+                const circumference = 2 * Math.PI * radius;
+                const offset = circumference - (progress / 100) * circumference;
+
+                return (
+                  <div
+                    key={`${event.job.id}-${event.type}`}
+                    className="p-3 border rounded-md hover:bg-muted/50 cursor-pointer flex items-center justify-between space-x-3"
+                    onClick={() => {
+                      onSelectJob(event.job);
+                      setIsJobDetailsDialogOpen(false);
+                    }}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Briefcase className="h-5 w-5 text-primary" />
+                      <div>
+                        <p className="font-semibold text-base">
+                          {event.job.title} <span className="text-xs text-muted-foreground ml-1">({event.type === 'start' ? 'Start Date' : 'Deadline'})</span>
+                        </p>
+                        {event.job.category && (
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <span className={cn("w-2 h-2 rounded-full mr-1", getCategoryColor(event.job.category))}></span>
+                            <span>{event.job.category}</span>
+                          </div>
+                        )}
+                        {(event.job.startTime || event.job.endTime) && (
+                          <p className="text-xs text-muted-foreground">
+                            {event.job.startTime && `Start: ${formatTime(event.job.startTime)}`}
+                            {event.job.startTime && event.job.endTime && ` - `}
+                            {event.job.endTime && `End: ${formatTime(event.job.endTime)}`}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 relative w-12 h-12">
+                      <svg className="w-full h-full" viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}>
+                        <circle
+                          className="text-gray-200 dark:text-gray-700"
+                          strokeWidth={strokeWidth}
+                          stroke="currentColor"
+                          fill="transparent"
+                          r={radius}
+                          cx={center}
+                          cy={center}
+                        />
+                        <circle
+                          className={cn("stroke-current", progressBarColorClass)}
+                          strokeWidth={strokeWidth}
+                          strokeDasharray={circumference}
+                          strokeDashoffset={offset}
+                          strokeLinecap="round"
+                          fill="transparent"
+                          r={radius}
+                          cx={center}
+                          cy={center}
+                          transform={`rotate(-90 ${center} ${center})`}
+                        />
+                        <text
+                          x="50%"
+                          y="50%"
+                          dominantBaseline="middle"
+                          textAnchor="middle"
+                          className="text-xs font-bold text-foreground"
+                        >
+                          {progress}%
+                        </text>
+                      </svg>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </ScrollArea>
           <DialogFooter className="mt-4">
@@ -217,7 +298,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
                 </DialogHeader>
                 <AddJobForm
                   onAddJob={handleAddJobAndClose}
-                  initialStartDate={selectedDate} // Pass the selected date
+                  initialStartDate={selectedDate}
                 />
               </DialogContent>
             </Dialog>
