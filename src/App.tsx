@@ -122,33 +122,31 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster /> {/* Moved Toaster outside TooltipProvider */}
+      <Sonner /> {/* Moved Sonner outside TooltipProvider */}
       <TooltipProvider>
-        <> {/* Added a React Fragment here */}
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Overview jobs={jobs} />} />
-              <Route
-                path="/jobs"
-                element={
-                  <JobsPage
-                    jobs={jobs}
-                    onAddJob={handleAddJob}
-                    onDeleteJob={handleDeleteJob}
-                    onUpdateJob={handleUpdateJob}
-                    onToggleTodo={handleToggleTodo}
-                    onAddTemplatedTodos={handleAddTemplatedTodos}
-                    onAddCustomTodo={handleAddCustomTodo}
-                  />
-                }
-              />
-              <Route path="/calendar" element={<CalendarPage jobs={jobs} />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </> {/* Closed the React Fragment */}
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Overview jobs={jobs} />} />
+            <Route
+              path="/jobs"
+              element={
+                <JobsPage
+                  jobs={jobs}
+                  onAddJob={handleAddJob}
+                  onDeleteJob={handleDeleteJob}
+                  onUpdateJob={handleUpdateJob}
+                  onToggleTodo={handleToggleTodo}
+                  onAddTemplatedTodos={handleAddTemplatedTodos}
+                  onAddCustomTodo={handleAddCustomTodo}
+                />
+              }
+            />
+            <Route path="/calendar" element={<CalendarPage jobs={jobs} />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
