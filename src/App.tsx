@@ -6,12 +6,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
 import CalendarPage from "./pages/CalendarPage";
-import TimerPage from "./pages/TimerPage"; // Import TimerPage
+import TimerPage from "./pages/TimerPage";
+import SettingsPage from "./pages/SettingsPage"; // Import SettingsPage
 import NotFound from "./pages/NotFound";
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { useUserPersistence } from '@/hooks/use-user-persistence';
+import { useCustomersPersistence } from '@/hooks/use-customers-persistence'; // Import new hook
 import { v4 as uuidv4 } from 'uuid';
-import { Job, TodoItem, defaultTodoTemplates, User } from '@/types';
+import { Job, TodoItem, defaultTodoTemplates, User, Customer } from '@/types'; // Import Customer type
 import Header from "./components/Header";
 import MobileNav from "./components/MobileNav";
 import { useState } from "react";
@@ -21,8 +23,9 @@ const queryClient = new QueryClient();
 const App = () => {
   const [jobs, setJobs] = useJobsPersistence();
   const [user, setUser] = useUserPersistence();
+  const [customers, setCustomers] = useCustomersPersistence(); // Initialize customer persistence
 
-  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => {
+  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => {
     const newJob: Job = {
       id: uuidv4(),
       title,
@@ -34,6 +37,7 @@ const App = () => {
       endTime,
       templatedTodosAdded: false,
       category: category || "Uncategorized",
+      customerId, // Assign customerId
     };
     setJobs((prevJobs) => [...prevJobs, newJob]);
   };
@@ -140,6 +144,33 @@ const App = () => {
     setUser(updatedUser);
   };
 
+  const handleAddCustomer = (name: string, contactInfo?: string) => {
+    const newCustomer: Customer = {
+      id: uuidv4(),
+      name,
+      contactInfo,
+    };
+    setCustomers((prevCustomers) => [...prevCustomers, newCustomer]);
+  };
+
+  const handleUpdateCustomer = (updatedCustomer: Customer) => {
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((customer) =>
+        customer.id === updatedCustomer.id ? updatedCustomer : customer
+      )
+    );
+  };
+
+  const handleDeleteCustomer = (customerId: string) => {
+    setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer.id !== customerId));
+    // Also remove customerId from any jobs associated with this customer
+    setJobs((prevJobs) =>
+      prevJobs.map((job) =>
+        job.customerId === customerId ? { ...job, customerId: undefined } : job
+      )
+    );
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
@@ -179,6 +210,17 @@ const App = () => {
                   jobs={jobs}
                   onAddJob={handleAddJob}
                   onToggleTodo={handleToggleTodo}
+                />
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <SettingsPage
+                  customers={customers}
+                  onAddCustomer={handleAddCustomer}
+                  onUpdateCustomer={handleUpdateCustomer}
+                  onDeleteCustomer={handleDeleteCustomer}
                 />
               }
             />

@@ -16,6 +16,13 @@ export interface Job {
   endTime?: string; // New field for end time
   templatedTodosAdded?: boolean; // New flag to track if templated todos have been added
   category: string; // New field for job category
+  customerId?: string; // New field to link to a customer
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  contactInfo?: string; // e.g., email, phone number
 }
 
 export interface User {
