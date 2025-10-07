@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Home, Briefcase, CalendarDays } from 'lucide-react'; // Added CalendarDays icon
+import { Home, Briefcase, CalendarDays, Timer as TimerIcon } from 'lucide-react'; // Added TimerIcon
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -33,6 +33,12 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
             <Link to="/calendar" onClick={onClose}>
               <CalendarDays className="mr-3 h-5 w-5" />
               Calendar View
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" className="justify-start text-lg h-12">
+            <Link to="/timer" onClick={onClose}>
+              <TimerIcon className="mr-3 h-5 w-5" />
+              Task Timer
             </Link>
           </Button>
           {/* Add more navigation links here if needed */}

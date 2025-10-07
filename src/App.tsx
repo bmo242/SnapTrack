@@ -5,10 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
-import CalendarPage from "./pages/CalendarPage"; // Import CalendarPage
+import CalendarPage from "./pages/CalendarPage";
+import TimerPage from "./pages/TimerPage"; // Import TimerPage
 import NotFound from "./pages/NotFound";
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
-import { useUserPersistence } from '@/hooks/use-user-persistence'; // Import the new user persistence hook
+import { useUserPersistence } from '@/hooks/use-user-persistence';
 import { v4 as uuidv4 } from 'uuid';
 import { Job, TodoItem, defaultTodoTemplates, User } from '@/types';
 import Header from "./components/Header";
@@ -19,7 +20,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [jobs, setJobs] = useJobsPersistence();
-  const [user, setUser] = useUserPersistence(); // Initialize user state
+  const [user, setUser] = useUserPersistence();
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => {
     const newJob: Job = {
@@ -29,8 +30,8 @@ const App = () => {
       todos: [],
       startDate,
       deadlineDate,
-      startTime, // Pass start time
-      endTime,   // Pass end time
+      startTime,
+      endTime,
       templatedTodosAdded: false,
       category: category || "Uncategorized",
     };
@@ -60,25 +61,25 @@ const App = () => {
 
                   switch (todo.status) {
                     case 'empty':
-                      newStatus = 'in-progress'; // New state: empty -> in-progress
+                      newStatus = 'in-progress';
                       newCompletedAt = undefined;
                       break;
-                    case 'in-progress': // New state: in-progress -> checked
+                    case 'in-progress':
                       newStatus = 'checked';
-                      newCompletedAt = new Date().toISOString(); // Set timestamp when checked
+                      newCompletedAt = new Date().toISOString();
                       break;
                     case 'checked':
                       newStatus = 'not-needed';
-                      newCompletedAt = undefined; // Clear timestamp if no longer checked
+                      newCompletedAt = undefined;
                       break;
                     case 'not-needed':
                       newStatus = 'unsure';
-                      newCompletedAt = undefined; // Clear timestamp
+                      newCompletedAt = undefined;
                       break;
                     case 'unsure':
                     default:
                       newStatus = 'empty';
-                      newCompletedAt = undefined; // Clear timestamp
+                      newCompletedAt = undefined;
                       break;
                   }
                   return { ...todo, status: newStatus, completedAt: newCompletedAt };
@@ -103,7 +104,7 @@ const App = () => {
                   id: uuidv4(),
                   title: template.title,
                   status: 'empty',
-                  completedAt: undefined, // Ensure new templated todos don't have a completedAt
+                  completedAt: undefined,
                 })),
               ],
               templatedTodosAdded: true,
@@ -126,7 +127,7 @@ const App = () => {
                   id: uuidv4(),
                   title: todoTitle,
                   status: 'empty',
-                  completedAt: undefined, // Ensure new custom todos don't have a completedAt
+                  completedAt: undefined,
                 },
               ],
             }
@@ -167,7 +168,17 @@ const App = () => {
                 <CalendarPage
                   jobs={jobs}
                   onAddJob={handleAddJob}
-                  onToggleTodo={handleToggleTodo} // Pass onToggleTodo to CalendarPage
+                  onToggleTodo={handleToggleTodo}
+                />
+              }
+            />
+            <Route
+              path="/timer"
+              element={
+                <TimerPage
+                  jobs={jobs}
+                  onAddJob={handleAddJob}
+                  onToggleTodo={handleToggleTodo}
                 />
               }
             />
