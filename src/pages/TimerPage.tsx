@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Play, Pause, RotateCcw, Timer as TimerIcon } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { Separator } => '@/components/ui/separator';
 import { toast } from 'sonner';
 
 interface TimerPageProps {
@@ -17,21 +17,22 @@ interface TimerPageProps {
 }
 
 const TimerPage: React.FC<TimerPageProps> = ({ jobs, onAddJob, onToggleTodo }) => {
-  const [isNavOpen, setIsNavOpen] = useState(false);
-  const [elapsedTime, setElapsedTime] = useState(0); // Time in seconds
+  const [elapsedTime, setElapsedTime] = useState(0); // Time in milliseconds
   const [isRunning, setIsRunning] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [selectedTodoId, setSelectedTodoId] = useState<string | null>(null);
   const intervalRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number>(0); // To store the start time of the current interval
 
   const selectedJob = jobs.find(job => job.id === selectedJobId);
   const selectedTodo = selectedJob?.todos.find(todo => todo.id === selectedTodoId);
 
   useEffect(() => {
     if (isRunning) {
+      startTimeRef.current = Date.now() - elapsedTime; // Adjust start time for accurate elapsed time
       intervalRef.current = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1);
-      }, 1000);
+        setElapsedTime(Date.now() - startTimeRef.current);
+      }, 10); // Update every 10 milliseconds for millisecond accuracy
     } else if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -41,16 +42,17 @@ const TimerPage: React.FC<TimerPageProps> = ({ jobs, onAddJob, onToggleTodo }) =
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning]);
+  }, [isRunning, elapsedTime]); // Added elapsedTime to dependencies to re-evaluate interval on pause/resume
 
-  const formatTime = (totalSeconds: number) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+  const formatTime = (totalMilliseconds: number) => {
+    const hours = Math.floor(totalMilliseconds / 3600000);
+    const minutes = Math.floor((totalMilliseconds % 3600000) / 60000);
+    const seconds = Math.floor((totalMilliseconds % 60000) / 1000);
+    const milliseconds = Math.floor((totalMilliseconds % 1000) / 10); // Display two digits for milliseconds
 
     return [hours, minutes, seconds]
       .map(unit => String(unit).padStart(2, '0'))
-      .join(':');
+      .join(':') + `.${String(milliseconds).padStart(2, '0')}`;
   };
 
   const handleStartPause = () => {
@@ -76,11 +78,13 @@ const TimerPage: React.FC<TimerPageProps> = ({ jobs, onAddJob, onToggleTodo }) =
     setSelectedJobId(jobId);
     setSelectedTodoId(null); // Reset todo selection when job changes
     setIsRunning(false); // Pause timer if running
+    setElapsedTime(0); // Reset timer when job changes
   };
 
   const handleTodoSelect = (todoId: string) => {
     setSelectedTodoId(todoId);
     setIsRunning(false); // Pause timer if running
+    setElapsedTime(0); // Reset timer when todo changes
   };
 
   return (
