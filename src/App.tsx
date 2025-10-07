@@ -61,6 +61,10 @@ const App = () => {
 
                   switch (todo.status) {
                     case 'empty':
+                      newStatus = 'in-progress'; // New state: empty -> in-progress
+                      newCompletedAt = undefined;
+                      break;
+                    case 'in-progress': // New state: in-progress -> checked
                       newStatus = 'checked';
                       newCompletedAt = new Date().toISOString(); // Set timestamp when checked
                       break;

@@ -59,7 +59,8 @@ const JobCard: React.FC<JobCardProps> = ({
     let totalCountable = 0;
 
     job.todos.forEach(todo => {
-      if (todo.status !== 'not-needed') { // Exclude 'not-needed' from total countable items
+      // 'not-needed' tasks are not counted towards total progress
+      if (todo.status !== 'not-needed') {
         totalCountable++;
         if (todo.status === 'checked') {
           completedCount++;

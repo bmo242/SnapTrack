@@ -129,6 +129,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
     let totalCountable = 0;
 
     job.todos.forEach(todo => {
+      // 'not-needed' tasks are not counted towards total progress
       if (todo.status !== 'not-needed') {
         totalCountable++;
         if (todo.status === 'checked') {

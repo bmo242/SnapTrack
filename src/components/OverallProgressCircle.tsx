@@ -12,6 +12,7 @@ const OverallProgressCircle: React.FC<OverallProgressCircleProps> = ({ jobs }) =
 
     jobs.forEach(job => {
       job.todos.forEach(todo => {
+        // 'not-needed' tasks are not counted towards total progress
         if (todo.status !== 'not-needed') {
           totalCountableTodos++;
           if (todo.status === 'checked') {

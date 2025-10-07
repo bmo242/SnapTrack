@@ -1,7 +1,7 @@
 export interface TodoItem {
   id: string;
   title: string;
-  status: 'empty' | 'checked' | 'not-needed' | 'unsure';
+  status: 'empty' | 'checked' | 'not-needed' | 'unsure' | 'in-progress'; // Added 'in-progress'
   completedAt?: string; // New field to store completion timestamp
 }
 

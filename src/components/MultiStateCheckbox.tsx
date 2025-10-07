@@ -1,9 +1,9 @@
 import React from 'react';
-import { Check, X, Minus } from 'lucide-react';
+import { Check, X, Minus, Loader2 } from 'lucide-react'; // Import Loader2 for 'in-progress'
 import { cn } from '@/lib/utils';
 
 interface MultiStateCheckboxProps {
-  status: 'empty' | 'checked' | 'not-needed' | 'unsure';
+  status: 'empty' | 'checked' | 'not-needed' | 'unsure' | 'in-progress'; // Updated status type
   onStatusChange: () => void;
   id: string;
 }
@@ -20,6 +20,8 @@ const MultiStateCheckbox: React.FC<MultiStateCheckboxProps> = ({ status, onStatu
         return <X className="h-4 w-4 text-destructive" />;
       case 'unsure':
         return <Minus className="h-4 w-4 text-muted-foreground" />;
+      case 'in-progress': // New case for 'in-progress'
+        return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />; // Using Loader2 icon
       case 'empty':
       default:
         return null;
