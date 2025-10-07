@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Edit } from 'lucide-react';
 import EditProfileForm from './EditProfileForm';
-import { ThemeToggle } from './ThemeToggle';
 import { format, parseISO, differenceInDays, isPast, isToday } from 'date-fns'; // Import date-fns utilities
 
 interface UserProfileHeaderProps {
@@ -82,7 +81,6 @@ const UserProfileHeader: React.FC<UserProfileHeaderProps> = ({ user, onUpdateUse
         </div>
       </div>
       <div className="flex items-center space-x-2">
-        <ThemeToggle />
         <Tooltip>
           <TooltipTrigger asChild>
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

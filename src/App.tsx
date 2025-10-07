@@ -14,7 +14,6 @@ import { Job, TodoItem, defaultTodoTemplates, User } from '@/types';
 import Header from "./components/Header";
 import MobileNav from "./components/MobileNav";
 import { useState } from "react";
-import { ThemeProvider } from "@/components/theme-provider"; // Import ThemeProvider
 
 const queryClient = new QueryClient();
 
@@ -142,43 +141,41 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme"> {/* Add ThemeProvider */}
-        <Toaster />
-        <Sonner />
-        <TooltipProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Overview jobs={jobs} user={user} onUpdateUser={handleUpdateUser} onAddJob={handleAddJob} />} />
-              <Route
-                path="/jobs"
-                element={
-                  <JobsPage
-                    jobs={jobs}
-                    onAddJob={handleAddJob}
-                    onDeleteJob={handleDeleteJob}
-                    onUpdateJob={handleUpdateJob}
-                    onToggleTodo={handleToggleTodo}
-                    onAddTemplatedTodos={handleAddTemplatedTodos}
-                    onAddCustomTodo={handleAddCustomTodo}
-                  />
-                }
-              />
-              <Route
-                path="/calendar"
-                element={
-                  <CalendarPage
-                    jobs={jobs}
-                    onAddJob={handleAddJob}
-                    onToggleTodo={handleToggleTodo} // Pass onToggleTodo to CalendarPage
-                  />
-                }
-              />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
+      <Toaster />
+      <Sonner />
+      <TooltipProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Overview jobs={jobs} user={user} onUpdateUser={handleUpdateUser} onAddJob={handleAddJob} />} />
+            <Route
+              path="/jobs"
+              element={
+                <JobsPage
+                  jobs={jobs}
+                  onAddJob={handleAddJob}
+                  onDeleteJob={handleDeleteJob}
+                  onUpdateJob={handleUpdateJob}
+                  onToggleTodo={handleToggleTodo}
+                  onAddTemplatedTodos={handleAddTemplatedTodos}
+                  onAddCustomTodo={handleAddCustomTodo}
+                />
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <CalendarPage
+                  jobs={jobs}
+                  onAddJob={handleAddJob}
+                  onToggleTodo={handleToggleTodo} // Pass onToggleTodo to CalendarPage
+                />
+              }
+            />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 };
