@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Customer } from '@/types'; // Import Customer type
 
 interface HeaderProps {
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string, notes?: string) => void;
   onOpenNav: () => void;
   showAddJobButton?: boolean;
   categories: string[]; // New prop for dynamic categories
@@ -17,8 +17,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton = true, categories, customers }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => {
-    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category, customerId);
+  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string, notes?: string) => {
+    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category, customerId, notes);
     setIsDialogOpen(false);
   };
 
@@ -44,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton =
               <p>Add New Job</p>
             </TooltipContent>
           </Tooltip>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create New Job</DialogTitle>
             </DialogHeader>

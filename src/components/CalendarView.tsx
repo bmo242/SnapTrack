@@ -33,7 +33,7 @@ import { getCategoryColor } from '@/lib/category-colors';
 interface CalendarViewProps {
   jobs: Job[];
   onSelectJob: (job: Job) => void;
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string, notes?: string) => void;
   categories: string[]; // New prop for dynamic categories
   customers: Customer[]; // New prop for customers
 }
@@ -107,8 +107,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
     setIsJobDetailsDialogOpen(true);
   };
 
-  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => {
-    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category, customerId);
+  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string, notes?: string) => {
+    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category, customerId, notes);
     setIsAddEventDialogOpen(false);
     setIsJobDetailsDialogOpen(false);
   };
@@ -303,7 +303,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
                   <PlusCircle className="mr-2 h-4 w-4" /> Add an Event
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Add New Job for {selectedDate ? format(selectedDate, 'PPP') : ''}</DialogTitle>
                 </DialogHeader>
