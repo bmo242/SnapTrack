@@ -1,5 +1,4 @@
 import React from 'react';
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import UserProfileHeader from '@/components/UserProfileHeader';
 import TaskSummary from '@/components/TaskSummary';
 import ActiveProjectsCarousel from '@/components/ActiveProjectsCarousel';
@@ -46,7 +45,6 @@ const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser, onAddJob 
           <ActiveProjectsCarousel jobs={jobs} onSelectJob={handleSelectJob} /> {/* Pass onSelectJob */}
           <DailyActivityChart jobs={jobs} /> {/* Add the new DailyActivityChart */}
         </div>
-        <MadeWithDyad />
       </div>
   );
 };

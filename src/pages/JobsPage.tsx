@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Job, TodoItem, defaultTodoTemplates, defaultCategories } from '@/types';
 import Header from '@/components/Header';
 import JobCard from '@/components/JobCard';
@@ -94,8 +93,6 @@ const JobsPage: React.FC<JobsPageProps> = ({
             ))
           )}
         </div>
-
-        <MadeWithDyad />
       </div>
     </div>
   );

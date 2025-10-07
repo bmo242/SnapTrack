@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
 import CalendarView from '@/components/CalendarView';
@@ -60,7 +59,6 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob, onToggleTod
       </div>
 
       <Separator className="my-8 w-full px-4" />
-      <MadeWithDyad />
 
       {/* Job Quick View Dialog */}
       <Dialog open={isQuickViewOpen} onOpenChange={setIsQuickViewOpen}>
