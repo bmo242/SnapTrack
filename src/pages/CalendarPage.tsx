@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
 import CalendarView from '@/components/CalendarView';
@@ -22,6 +22,20 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob, onToggleTod
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false); // State for quick view dialog
   const [selectedJobForQuickView, setSelectedJobForQuickView] = useState<Job | null>(null); // State for selected job
+
+  // Effect to update selectedJobForQuickView when jobs array changes
+  useEffect(() => {
+    if (isQuickViewOpen && selectedJobForQuickView) {
+      const updatedJob = jobs.find(job => job.id === selectedJobForQuickView.id);
+      if (updatedJob) {
+        setSelectedJobForQuickView(updatedJob);
+      } else {
+        // If the job was deleted while quick view was open
+        setIsQuickViewOpen(false);
+        setSelectedJobForQuickView(null);
+      }
+    }
+  }, [jobs, isQuickViewOpen, selectedJobForQuickView?.id]); // Depend on jobs, dialog open state, and selected job ID
 
   const handleSelectJob = (job: Job) => {
     setSelectedJobForQuickView(job);
