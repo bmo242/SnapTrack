@@ -54,12 +54,11 @@ export const defaultTodoTemplates: Omit<TodoItem, 'id' | 'status' | 'completedAt
   { title: "Backup Files" },
 ];
 
-export const defaultCategories = [
-  "All", // Added for filtering
+// These will now be the initial categories for the persistence hook
+export const initialDefaultCategories = [
   "Food Photography",
   "Corporate Portraits",
   "Commercial Photography",
   "Weddings",
   "Product Photography",
-  "Other", // Option for custom categories
 ];

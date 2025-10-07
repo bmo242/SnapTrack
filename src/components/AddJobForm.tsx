@@ -9,27 +9,36 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { defaultCategories } from '@/types';
+import { Customer } from '@/types'; // Import Customer type
 
 interface AddJobFormProps {
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void;
-  initialStartDate?: Date | null; // New prop for initial start date
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => void;
+  initialStartDate?: Date | null;
+  categories: string[]; // New prop for dynamic categories
+  customers: Customer[]; // New prop for customers
 }
 
-const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate }) => {
+const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate, categories, customers }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState<Date | undefined>(initialStartDate || undefined); // Initialize with prop
+  const [startDate, setStartDate] = useState<Date | undefined>(initialStartDate || undefined);
   const [deadlineDate, setDeadlineDate] = useState<Date | undefined>(undefined);
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [category, setCategory] = useState(defaultCategories[0]);
+  const [category, setCategory] = useState(categories.includes("Uncategorized") ? "Uncategorized" : categories[0] || "");
   const [customCategory, setCustomCategory] = useState('');
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>(undefined); // New state for customer
 
-  // Update startDate if initialStartDate prop changes
   useEffect(() => {
     setStartDate(initialStartDate || undefined);
   }, [initialStartDate]);
+
+  useEffect(() => {
+    // Ensure selected category is still valid if categories list changes
+    if (!categories.includes(category) && category !== "Other") {
+      setCategory(categories.includes("Uncategorized") ? "Uncategorized" : categories[0] || "");
+    }
+  }, [categories, category]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,16 +51,18 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate }) =
         deadlineDate ? format(deadlineDate, "yyyy-MM-dd") : undefined,
         startTime.trim() || undefined,
         endTime.trim() || undefined,
-        finalCategory || "Uncategorized"
+        finalCategory || "Uncategorized",
+        selectedCustomerId // Pass selected customer ID
       );
       setTitle('');
       setDescription('');
-      setStartDate(initialStartDate || undefined); // Reset to initialStartDate or undefined
+      setStartDate(initialStartDate || undefined);
       setDeadlineDate(undefined);
       setStartTime('');
       setEndTime('');
-      setCategory(defaultCategories[0]);
+      setCategory(categories.includes("Uncategorized") ? "Uncategorized" : categories[0] || "");
       setCustomCategory('');
+      setSelectedCustomerId(undefined); // Reset customer selection
     }
   };
 
@@ -83,7 +94,7 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate }) =
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
-            {defaultCategories.map((cat) => (
+            {categories.filter(cat => cat !== "All").map((cat) => ( // Filter "All" from add/edit forms
               <SelectItem key={cat} value={cat}>
                 {cat}
               </SelectItem>
@@ -99,6 +110,22 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate }) =
             required
           />
         )}
+      </div>
+      <div>
+        <Label htmlFor="customerSelect">Customer</Label>
+        <Select onValueChange={setSelectedCustomerId} value={selectedCustomerId || ""}>
+          <SelectTrigger id="customerSelect">
+            <SelectValue placeholder="Select a customer (optional)" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">No Customer</SelectItem>
+            {customers.map((customer) => (
+              <SelectItem key={customer.id} value={customer.id}>
+                {customer.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">

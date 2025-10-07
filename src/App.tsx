@@ -7,13 +7,14 @@ import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
 import CalendarPage from "./pages/CalendarPage";
 import TimerPage from "./pages/TimerPage";
-import SettingsPage from "./pages/SettingsPage"; // Import SettingsPage
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { useUserPersistence } from '@/hooks/use-user-persistence';
-import { useCustomersPersistence } from '@/hooks/use-customers-persistence'; // Import new hook
+import { useCustomersPersistence } from '@/hooks/use-customers-persistence';
+import { useCategoriesPersistence } from '@/hooks/use-categories-persistence'; // Import new hook
 import { v4 as uuidv4 } from 'uuid';
-import { Job, TodoItem, defaultTodoTemplates, User, Customer } from '@/types'; // Import Customer type
+import { Job, TodoItem, defaultTodoTemplates, User, Customer } from '@/types';
 import Header from "./components/Header";
 import MobileNav from "./components/MobileNav";
 import { useState } from "react";
@@ -23,7 +24,8 @@ const queryClient = new QueryClient();
 const App = () => {
   const [jobs, setJobs] = useJobsPersistence();
   const [user, setUser] = useUserPersistence();
-  const [customers, setCustomers] = useCustomersPersistence(); // Initialize customer persistence
+  const [customers, setCustomers] = useCustomersPersistence();
+  const [categories, setCategories] = useCategoriesPersistence(); // Initialize category persistence
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => {
     const newJob: Job = {
@@ -37,7 +39,7 @@ const App = () => {
       endTime,
       templatedTodosAdded: false,
       category: category || "Uncategorized",
-      customerId, // Assign customerId
+      customerId,
     };
     setJobs((prevJobs) => [...prevJobs, newJob]);
   };
@@ -163,10 +165,35 @@ const App = () => {
 
   const handleDeleteCustomer = (customerId: string) => {
     setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer.id !== customerId));
-    // Also remove customerId from any jobs associated with this customer
     setJobs((prevJobs) =>
       prevJobs.map((job) =>
         job.customerId === customerId ? { ...job, customerId: undefined } : job
+      )
+    );
+  };
+
+  const handleAddCategory = (name: string) => {
+    setCategories((prevCategories) => [...prevCategories, name]);
+  };
+
+  const handleUpdateCategory = (oldName: string, newName: string) => {
+    setCategories((prevCategories) =>
+      prevCategories.map((cat) => (cat === oldName ? newName : cat))
+    );
+    // Update all jobs that use the old category name
+    setJobs((prevJobs) =>
+      prevJobs.map((job) =>
+        job.category === oldName ? { ...job, category: newName } : job
+      )
+    );
+  };
+
+  const handleDeleteCategory = (name: string) => {
+    setCategories((prevCategories) => prevCategories.filter((cat) => cat !== name));
+    // Update all jobs that use the deleted category to "Uncategorized"
+    setJobs((prevJobs) =>
+      prevJobs.map((job) =>
+        job.category === name ? { ...job, category: "Uncategorized" } : job
       )
     );
   };
@@ -190,6 +217,7 @@ const App = () => {
                   onToggleTodo={handleToggleTodo}
                   onAddTemplatedTodos={handleAddTemplatedTodos}
                   onAddCustomTodo={handleAddCustomTodo}
+                  categories={categories} // Pass categories to JobsPage
                 />
               }
             />
@@ -200,6 +228,7 @@ const App = () => {
                   jobs={jobs}
                   onAddJob={handleAddJob}
                   onToggleTodo={handleToggleTodo}
+                  categories={categories} // Pass categories to CalendarPage
                 />
               }
             />
@@ -221,6 +250,10 @@ const App = () => {
                   onAddCustomer={handleAddCustomer}
                   onUpdateCustomer={handleUpdateCustomer}
                   onDeleteCustomer={handleDeleteCustomer}
+                  categories={categories}
+                  onAddCategory={handleAddCategory}
+                  onUpdateCategory={handleUpdateCategory}
+                  onDeleteCategory={handleDeleteCategory}
                 />
               }
             />

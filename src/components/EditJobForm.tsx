@@ -9,15 +9,17 @@ import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Job, defaultCategories } from '@/types';
+import { Job, Customer } from '@/types'; // Import Customer type
 
 interface EditJobFormProps {
   job: Job;
   onUpdateJob: (updatedJob: Job) => void;
   onClose: () => void;
+  categories: string[]; // New prop for dynamic categories
+  customers: Customer[]; // New prop for customers
 }
 
-const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) => {
+const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose, categories, customers }) => {
   const [title, setTitle] = useState(job.title);
   const [description, setDescription] = useState(job.description);
   const [startDate, setStartDate] = useState<Date | undefined>(
@@ -26,23 +28,34 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
   const [deadlineDate, setDeadlineDate] = useState<Date | undefined>(
     job.deadlineDate ? parseISO(job.deadlineDate) : undefined
   );
-  const [startTime, setStartTime] = useState(job.startTime || ''); // New state for start time
-  const [endTime, setEndTime] = useState(job.endTime || '');     // New state for end time
-  const [category, setCategory] = useState(job.category || defaultCategories[0]);
+  const [startTime, setStartTime] = useState(job.startTime || '');
+  const [endTime, setEndTime] = useState(job.endTime || '');
+  const [category, setCategory] = useState(job.category);
   const [customCategory, setCustomCategory] = useState(
-    !defaultCategories.includes(job.category) && job.category !== "Uncategorized" ? job.category : ''
+    !categories.includes(job.category) && job.category !== "Uncategorized" ? job.category : ''
   );
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>(job.customerId); // New state for customer
 
   useEffect(() => {
     setTitle(job.title);
     setDescription(job.description);
     setStartDate(job.startDate ? parseISO(job.startDate) : undefined);
     setDeadlineDate(job.deadlineDate ? parseISO(job.deadlineDate) : undefined);
-    setStartTime(job.startTime || ''); // Update start time on job change
-    setEndTime(job.endTime || '');     // Update end time on job change
-    setCategory(defaultCategories.includes(job.category) ? job.category : "Other");
-    setCustomCategory(!defaultCategories.includes(job.category) && job.category !== "Uncategorized" ? job.category : '');
-  }, [job]);
+    setStartTime(job.startTime || '');
+    setEndTime(job.endTime || '');
+    // Set category, handling cases where job.category might be a custom one not in the current list
+    if (categories.includes(job.category)) {
+      setCategory(job.category);
+      setCustomCategory('');
+    } else if (job.category === "Uncategorized") {
+      setCategory("Uncategorized");
+      setCustomCategory('');
+    } else {
+      setCategory("Other");
+      setCustomCategory(job.category);
+    }
+    setSelectedCustomerId(job.customerId);
+  }, [job, categories]); // Added categories to dependency array
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +67,10 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
         description,
         startDate: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
         deadlineDate: deadlineDate ? format(deadlineDate, "yyyy-MM-dd") : undefined,
-        startTime: startTime.trim() || undefined, // Update start time
-        endTime: endTime.trim() || undefined,     // Update end time
+        startTime: startTime.trim() || undefined,
+        endTime: endTime.trim() || undefined,
         category: finalCategory || "Uncategorized",
+        customerId: selectedCustomerId === "none" ? undefined : selectedCustomerId, // Handle "No Customer" option
       };
       onUpdateJob(updatedJob);
       onClose();
@@ -91,7 +105,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
-            {defaultCategories.map((cat) => (
+            {categories.filter(cat => cat !== "All").map((cat) => ( // Filter "All" from add/edit forms
               <SelectItem key={cat} value={cat}>
                 {cat}
               </SelectItem>
@@ -107,6 +121,22 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose }) 
             required
           />
         )}
+      </div>
+      <div>
+        <Label htmlFor="editCustomerSelect">Customer</Label>
+        <Select onValueChange={setSelectedCustomerId} value={selectedCustomerId || "none"}>
+          <SelectTrigger id="editCustomerSelect">
+            <SelectValue placeholder="Select a customer (optional)" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">No Customer</SelectItem>
+            {customers.map((customer) => (
+              <SelectItem key={customer.id} value={customer.id}>
+                {customer.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">

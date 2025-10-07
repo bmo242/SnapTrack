@@ -14,8 +14,8 @@ import {
   parse,
 } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Briefcase, PlusCircle } from 'lucide-react';
-import { Job } from '@/types';
+import { ChevronLeft, ChevronRight, Briefcase, PlusCircle, User as UserIcon } from 'lucide-react'; // Import UserIcon
+import { Job, Customer } from '@/types'; // Import Customer type
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -28,12 +28,14 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddJobForm from './AddJobForm';
-import { getCategoryColor } from '@/lib/category-colors'; // Import getCategoryColor
+import { getCategoryColor } from '@/lib/category-colors';
 
 interface CalendarViewProps {
   jobs: Job[];
   onSelectJob: (job: Job) => void;
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => void;
+  categories: string[]; // New prop for dynamic categories
+  customers: Customer[]; // New prop for customers
 }
 
 interface JobEvent {
@@ -41,7 +43,7 @@ interface JobEvent {
   type: 'start' | 'deadline';
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob, categories, customers }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isJobDetailsDialogOpen, setIsJobDetailsDialogOpen] = useState(false);
@@ -105,8 +107,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
     setIsJobDetailsDialogOpen(true);
   };
 
-  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => {
-    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category);
+  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => {
+    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category, customerId);
     setIsAddEventDialogOpen(false);
     setIsJobDetailsDialogOpen(false);
   };
@@ -121,7 +123,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
     }
   };
 
-  // Helper to calculate job progress
   const calculateProgress = (job: Job) => {
     if (job.todos.length === 0) return 0;
 
@@ -129,7 +130,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
     let totalCountable = 0;
 
     job.todos.forEach(todo => {
-      // 'not-needed' tasks are not counted towards total progress
       if (todo.status !== 'not-needed') {
         totalCountable++;
         if (todo.status === 'checked') {
@@ -142,7 +142,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
     return Math.round((completedCount / totalCountable) * 100);
   };
 
-  // Helper to get progress bar color class
   const getProgressBarColorClass = (progressValue: number) => {
     if (progressValue === 100) return 'text-green-500';
     if (progressValue >= 75) return 'text-blue-500';
@@ -216,13 +215,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
                 const center = viewBoxSize / 2;
                 const circumference = 2 * Math.PI * radius;
                 const offset = circumference - (progress / 100) * circumference;
+                const customer = event.job.customerId ? customers.find(c => c.id === event.job.customerId) : undefined;
 
                 return (
                   <div
                     key={`${event.job.id}-${event.type}`}
                     className="p-3 border rounded-md hover:bg-muted/50 cursor-pointer flex items-center justify-between space-x-3"
                     onClick={() => {
-                      onSelectJob(event.job); // Pass the full job object
+                      onSelectJob(event.job);
                       setIsJobDetailsDialogOpen(false);
                     }}
                   >
@@ -236,6 +236,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
                           <div className="flex items-center text-sm text-muted-foreground">
                             <span className={cn("w-2 h-2 rounded-full mr-1", getCategoryColor(event.job.category))}></span>
                             <span>{event.job.category}</span>
+                          </div>
+                        )}
+                        {customer && (
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <UserIcon className="h-3 w-3 mr-1" />
+                            <span>{customer.name}</span>
                           </div>
                         )}
                         {(event.job.startTime || event.job.endTime) && (
@@ -300,6 +306,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
                 <AddJobForm
                   onAddJob={handleAddJobAndClose}
                   initialStartDate={selectedDate}
+                  categories={categories}
+                  customers={customers}
                 />
               </DialogContent>
             </Dialog>

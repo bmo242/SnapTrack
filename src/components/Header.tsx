@@ -2,20 +2,23 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import AddJobForm from './AddJobForm';
-import { Menu, FilePlus } from 'lucide-react'; // Import FilePlus icon
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"; // Import Tooltip components
+import { Menu, FilePlus } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Customer } from '@/types'; // Import Customer type
 
 interface HeaderProps {
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => void;
   onOpenNav: () => void;
   showAddJobButton?: boolean;
+  categories: string[]; // New prop for dynamic categories
+  customers: Customer[]; // New prop for customers
 }
 
-const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton = true }) => {
+const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton = true, categories, customers }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string) => {
-    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category);
+  const handleAddJobAndClose = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => {
+    onAddJob(title, description, startDate, deadlineDate, startTime, endTime, category, customerId);
     setIsDialogOpen(false);
   };
 
@@ -31,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton =
           <Tooltip>
             <TooltipTrigger asChild>
               <DialogTrigger asChild>
-                <Button size="icon" className="ml-auto"> {/* Changed size to 'icon' */}
-                  <FilePlus className="h-5 w-5" /> {/* Changed to FilePlus icon */}
+                <Button size="icon" className="ml-auto">
+                  <FilePlus className="h-5 w-5" />
                   <span className="sr-only">Add New Job</span>
                 </Button>
               </DialogTrigger>
@@ -45,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton =
             <DialogHeader>
               <DialogTitle>Create New Job</DialogTitle>
             </DialogHeader>
-            <AddJobForm onAddJob={handleAddJobAndClose} />
+            <AddJobForm onAddJob={handleAddJobAndClose} categories={categories} customers={customers} />
           </DialogContent>
         </Dialog>
       )}

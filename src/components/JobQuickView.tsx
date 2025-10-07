@@ -1,6 +1,6 @@
 import React from 'react';
-import { Job } from '@/types';
-import { CalendarIcon, Clock, ListChecks } from 'lucide-react';
+import { Job, Customer } from '@/types'; // Import Customer type
+import { CalendarIcon, Clock, ListChecks, User as UserIcon } from 'lucide-react'; // Import UserIcon
 import { format, parseISO, differenceInDays, isPast, isToday, parse } from 'date-fns';
 import { Progress } from "@/components/ui/progress";
 import { getCategoryColor } from '@/lib/category-colors';
@@ -9,17 +9,16 @@ import TodoItem from './TodoItem';
 
 interface JobQuickViewProps {
   job: Job;
-  onToggleTodo: (jobId: string, todoId: string) => void; // Add onToggleTodo prop
+  onToggleTodo: (jobId: string, todoId: string) => void;
+  customers: Customer[]; // New prop for customers
 }
 
-const JobQuickView: React.FC<JobQuickViewProps> = ({ job, onToggleTodo }) => {
-  // Re-use progress calculation logic
+const JobQuickView: React.FC<JobQuickViewProps> = ({ job, onToggleTodo, customers }) => {
   const calculateProgressAndCounts = () => {
     let completedCount = 0;
     let totalCountable = 0;
 
     job.todos.forEach(todo => {
-      // 'not-needed' tasks are not counted towards total progress
       if (todo.status !== 'not-needed') {
         totalCountable++;
         if (todo.status === 'checked') {
@@ -72,6 +71,7 @@ const JobQuickView: React.FC<JobQuickViewProps> = ({ job, onToggleTodo }) => {
   };
 
   const categoryColor = getCategoryColor(job.category);
+  const customer = job.customerId ? customers.find(c => c.id === job.customerId) : undefined;
 
   return (
     <div className="space-y-4 py-4">
@@ -84,6 +84,12 @@ const JobQuickView: React.FC<JobQuickViewProps> = ({ job, onToggleTodo }) => {
             <span className="font-semibold mr-1">Category:</span>
             <span className={cn("w-3 h-3 rounded-full mr-1", categoryColor)}></span>
             {job.category}
+          </div>
+        )}
+        {customer && (
+          <div className="flex items-center">
+            <UserIcon className="mr-2 h-4 w-4" />
+            <span>Customer: {customer.name}</span>
           </div>
         )}
         {job.startDate && (

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Job, TodoItem as TodoItemType, defaultTodoTemplates } from '@/types';
+import { Job, TodoItem as TodoItemType, defaultTodoTemplates, Customer } from '@/types'; // Import Customer type
 import TodoItem from './TodoItem';
-import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock, ListChecks } from 'lucide-react'; // Import Clock and ListChecks icon
-import { format, parseISO, differenceInDays, isPast, isToday, parse } from 'date-fns'; // Import parse
+import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock, ListChecks, User as UserIcon } from 'lucide-react'; // Import UserIcon
+import { format, parseISO, differenceInDays, isPast, isToday, parse } from 'date-fns';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +22,8 @@ import EditJobForm from './EditJobForm';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { getCategoryColor } from '@/lib/category-colors'; // Import the new utility
-import { cn } from '@/lib/utils'; // Import cn utility
+import { getCategoryColor } from '@/lib/category-colors';
+import { cn } from '@/lib/utils';
 
 interface JobCardProps {
   job: Job;
@@ -32,6 +32,8 @@ interface JobCardProps {
   onAddCustomTodo: (jobId: string, todoTitle: string) => void;
   onDeleteJob: (jobId: string) => void;
   onUpdateJob: (updatedJob: Job) => void;
+  categories: string[]; // New prop for dynamic categories
+  customers: Customer[]; // New prop for customers
 }
 
 const JobCard: React.FC<JobCardProps> = ({
@@ -41,10 +43,12 @@ const JobCard: React.FC<JobCardProps> = ({
   onAddCustomTodo,
   onDeleteJob,
   onUpdateJob,
+  categories,
+  customers,
 }) => {
   const [customTodoTitle, setCustomTodoTitle] = useState('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true); // Changed to true to load collapsed
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const handleCustomTodoSubmit = () => {
     if (customTodoTitle.trim()) {
@@ -53,13 +57,11 @@ const JobCard: React.FC<JobCardProps> = ({
     }
   };
 
-  // Calculate progress percentage and task counts
   const calculateProgressAndCounts = () => {
     let completedCount = 0;
     let totalCountable = 0;
 
     job.todos.forEach(todo => {
-      // 'not-needed' tasks are not counted towards total progress
       if (todo.status !== 'not-needed') {
         totalCountable++;
         if (todo.status === 'checked') {
@@ -74,7 +76,6 @@ const JobCard: React.FC<JobCardProps> = ({
 
   const { completedCount, totalCountable, progress } = calculateProgressAndCounts();
 
-  // Determine progress bar color
   const getProgressBarColorClass = (progressValue: number) => {
     if (progressValue === 100) return 'bg-green-500';
     if (progressValue >= 75) return 'bg-blue-500';
@@ -85,7 +86,6 @@ const JobCard: React.FC<JobCardProps> = ({
 
   const progressBarColorClass = getProgressBarColorClass(progress);
 
-  // Due Date Counter Logic
   const deadlineDate = job.deadlineDate ? parseISO(job.deadlineDate) : null;
   const today = new Date();
   let dueDateMessage = '';
@@ -106,15 +106,15 @@ const JobCard: React.FC<JobCardProps> = ({
   const formatTime = (timeString?: string) => {
     if (!timeString) return '';
     try {
-      // Parse the time string (e.g., "14:30") and format it to AM/PM
       return format(parse(timeString, 'HH:mm', new Date()), 'h:mm a');
     } catch (error) {
       console.error("Error formatting time:", timeString, error);
-      return timeString; // Fallback to original string if parsing fails
+      return timeString;
     }
   };
 
   const categoryColor = getCategoryColor(job.category);
+  const customer = job.customerId ? customers.find(c => c.id === job.customerId) : undefined;
 
   return (
     <Card className="w-full">
@@ -137,7 +137,13 @@ const JobCard: React.FC<JobCardProps> = ({
                     <DialogHeader>
                       <DialogTitle>Edit Job</DialogTitle>
                     </DialogHeader>
-                    <EditJobForm job={job} onUpdateJob={onUpdateJob} onClose={() => setIsEditDialogOpen(false)} />
+                    <EditJobForm
+                      job={job}
+                      onUpdateJob={onUpdateJob}
+                      onClose={() => setIsEditDialogOpen(false)}
+                      categories={categories} // Pass categories
+                      customers={customers} // Pass customers
+                    />
                   </DialogContent>
                 </Dialog>
               </TooltipTrigger>
@@ -177,13 +183,19 @@ const JobCard: React.FC<JobCardProps> = ({
             </Tooltip>
           </div>
         </div>
-        {(job.startDate || job.deadlineDate || job.startTime || job.endTime || job.category || totalCountable > 0) && (
+        {(job.startDate || job.deadlineDate || job.startTime || job.endTime || job.category || job.customerId || totalCountable > 0) && (
           <div className="mt-2 text-sm text-muted-foreground flex flex-col space-y-1">
             {job.category && (
               <div className="flex items-center">
                 <span className="font-semibold mr-1">Category:</span>
-                <span className={cn("w-3 h-3 rounded-full mr-1", categoryColor)}></span> {/* Color dot */}
+                <span className={cn("w-3 h-3 rounded-full mr-1", categoryColor)}></span>
                 {job.category}
+              </div>
+            )}
+            {customer && (
+              <div className="flex items-center">
+                <UserIcon className="mr-2 h-4 w-4" />
+                <span>Customer: {customer.name}</span>
               </div>
             )}
             {job.startDate && (

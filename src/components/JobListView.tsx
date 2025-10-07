@@ -1,22 +1,22 @@
 import React, { useMemo } from 'react';
-import { Job } from '@/types';
-import { format, parseISO, parse, differenceInDays, isPast, isToday } from 'date-fns'; // Import date-fns utilities
-import { Briefcase, CalendarIcon, ListChecks } from 'lucide-react'; // Import CalendarIcon and ListChecks
+import { Job, Customer } from '@/types'; // Import Customer type
+import { format, parseISO, parse, differenceInDays, isPast, isToday } from 'date-fns';
+import { Briefcase, CalendarIcon, ListChecks, User as UserIcon } from 'lucide-react'; // Import UserIcon
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { getCategoryColor } from '@/lib/category-colors'; // Import getCategoryColor
-import { cn } from '@/lib/utils'; // Import cn utility
+import { getCategoryColor } from '@/lib/category-colors';
+import { cn } from '@/lib/utils';
 
 interface JobListViewProps {
   jobs: Job[];
   onSelectJob: (job: Job) => void;
+  customers: Customer[]; // New prop for customers
 }
 
-const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
+const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob, customers }) => {
   const sortedAndGroupedJobs = useMemo(() => {
     const grouped: { [key: string]: Job[] } = {};
 
-    // Group jobs by their start date or deadline date
     jobs.forEach(job => {
       const dateKey = job.startDate || job.deadlineDate;
       if (dateKey) {
@@ -28,7 +28,6 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
       }
     });
 
-    // Sort dates and then sort jobs within each date
     const sortedDates = Object.keys(grouped).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
     const result: { date: string; jobs: Job[] }[] = [];
@@ -54,7 +53,6 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
     }
   };
 
-  // Helper to calculate job progress
   const calculateProgressAndCounts = (job: Job) => {
     let completedCount = 0;
     let totalCountable = 0;
@@ -88,7 +86,6 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
               {group.jobs.map((job) => {
                 const { completedCount, totalCountable, progress } = calculateProgressAndCounts(job);
 
-                // Due Date Counter Logic
                 const deadlineDate = job.deadlineDate ? parseISO(job.deadlineDate) : null;
                 const today = new Date();
                 let dueDateMessage = '';
@@ -111,6 +108,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
                 }
 
                 const categoryColor = getCategoryColor(job.category);
+                const customer = job.customerId ? customers.find(c => c.id === job.customerId) : undefined;
 
                 return (
                   <Button
@@ -135,6 +133,12 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob }) => {
                         <div className="flex items-center">
                           <span className={cn("w-2 h-2 rounded-full mr-1", categoryColor)}></span>
                           <span>{job.category}</span>
+                        </div>
+                      )}
+                      {customer && (
+                        <div className="flex items-center">
+                          <UserIcon className="mr-1 h-3 w-3" />
+                          <span>{customer.name}</span>
                         </div>
                       )}
                       {job.deadlineDate && (
