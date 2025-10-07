@@ -42,9 +42,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
             </Link>
           </Button>
           <Button asChild variant="ghost" className="justify-start text-lg h-12">
-            <Link to="/settings" onClick={onClose}>
+            <Link to="/preferences" onClick={onClose}>
               <Settings className="mr-3 h-5 w-5" />
-              Settings
+              Preferences
             </Link>
           </Button>
           {/* Add more navigation links here if needed */}

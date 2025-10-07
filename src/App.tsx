@@ -7,12 +7,12 @@ import Overview from "./pages/Overview";
 import JobsPage from "./pages/JobsPage";
 import CalendarPage from "./pages/CalendarPage";
 import TimerPage from "./pages/TimerPage";
-import SettingsPage from "./pages/SettingsPage";
+import PreferencesPage from "./pages/PreferencesPage"; // Import PreferencesPage
 import NotFound from "./pages/NotFound";
 import { useJobsPersistence } from '@/hooks/use-jobs-persistence';
 import { useUserPersistence } from '@/hooks/use-user-persistence';
 import { useCustomersPersistence } from '@/hooks/use-customers-persistence';
-import { useCategoriesPersistence } from '@/hooks/use-categories-persistence'; // Import new hook
+import { useCategoriesPersistence } from '@/hooks/use-categories-persistence';
 import { v4 as uuidv4 } from 'uuid';
 import { Job, TodoItem, defaultTodoTemplates, User, Customer } from '@/types';
 import Header from "./components/Header";
@@ -25,7 +25,7 @@ const App = () => {
   const [jobs, setJobs] = useJobsPersistence();
   const [user, setUser] = useUserPersistence();
   const [customers, setCustomers] = useCustomersPersistence();
-  const [categories, setCategories] = useCategoriesPersistence(); // Initialize category persistence
+  const [categories, setCategories] = useCategoriesPersistence();
 
   const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => {
     const newJob: Job = {
@@ -181,7 +181,6 @@ const App = () => {
     setCategories((prevCategories) =>
       prevCategories.map((cat) => (cat === oldName ? newName : cat))
     );
-    // Update all jobs that use the old category name
     setJobs((prevJobs) =>
       prevJobs.map((job) =>
         job.category === oldName ? { ...job, category: newName } : job
@@ -191,7 +190,6 @@ const App = () => {
 
   const handleDeleteCategory = (name: string) => {
     setCategories((prevCategories) => prevCategories.filter((cat) => cat !== name));
-    // Update all jobs that use the deleted category to "Uncategorized"
     setJobs((prevJobs) =>
       prevJobs.map((job) =>
         job.category === name ? { ...job, category: "Uncategorized" } : job
@@ -218,8 +216,8 @@ const App = () => {
                   onToggleTodo={handleToggleTodo}
                   onAddTemplatedTodos={handleAddTemplatedTodos}
                   onAddCustomTodo={handleAddCustomTodo}
-                  categories={categories} // Pass categories to JobsPage
-                  customers={customers} // Pass customers to JobsPage
+                  categories={categories}
+                  customers={customers}
                 />
               }
             />
@@ -230,8 +228,8 @@ const App = () => {
                   jobs={jobs}
                   onAddJob={handleAddJob}
                   onToggleTodo={handleToggleTodo}
-                  categories={categories} // Pass categories to CalendarPage
-                  customers={customers} // Pass customers to CalendarPage
+                  categories={categories}
+                  customers={customers}
                 />
               }
             />
@@ -246,9 +244,9 @@ const App = () => {
               }
             />
             <Route
-              path="/settings"
+              path="/preferences"
               element={
-                <SettingsPage
+                <PreferencesPage
                   customers={customers}
                   onAddCustomer={handleAddCustomer}
                   onUpdateCustomer={handleUpdateCustomer}

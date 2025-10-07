@@ -4,20 +4,20 @@ import MobileNav from '@/components/MobileNav';
 import { Separator } from '@/components/ui/separator';
 import { Customer } from '@/types';
 import CustomerManagement from '@/components/CustomerManagement';
-import CategoryManagement from '@/components/CategoryManagement'; // Import new component
+import CategoryManagement from '@/components/CategoryManagement';
 
-interface SettingsPageProps {
+interface PreferencesPageProps {
   customers: Customer[];
-  onAddCustomer: (name: string, contactInfo?: string) => void;
+  onAddCustomer: (companyName: string | undefined, name: string, contactInfo?: string) => void;
   onUpdateCustomer: (updatedCustomer: Customer) => void;
   onDeleteCustomer: (customerId: string) => void;
-  categories: string[]; // New prop for categories
-  onAddCategory: (name: string) => void; // New prop for adding category
-  onUpdateCategory: (oldName: string, newName: string) => void; // New prop for updating category
-  onDeleteCategory: (name: string) => void; // New prop for deleting category
+  categories: string[];
+  onAddCategory: (name: string) => void;
+  onUpdateCategory: (oldName: string, newName: string) => void;
+  onDeleteCategory: (name: string) => void;
 }
 
-const SettingsPage: React.FC<SettingsPageProps> = ({
+const PreferencesPage: React.FC<PreferencesPageProps> = ({
   customers,
   onAddCustomer,
   onUpdateCustomer,
@@ -35,7 +35,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
       <MobileNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
 
       <div className="w-full px-4 py-6 max-w-4xl">
-        <h1 className="text-3xl font-bold text-center mb-6">Settings</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">Preferences</h1>
 
         <div className="space-y-8">
           <CustomerManagement
@@ -44,7 +44,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             onUpdateCustomer={onUpdateCustomer}
             onDeleteCustomer={onDeleteCustomer}
           />
-          <Separator /> {/* Add a separator between sections */}
+          <Separator />
           <CategoryManagement
             categories={categories}
             onAddCategory={onAddCategory}
@@ -58,4 +58,4 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   );
 };
 
-export default SettingsPage;
+export default PreferencesPage;
