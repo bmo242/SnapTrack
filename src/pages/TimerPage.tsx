@@ -17,6 +17,7 @@ interface TimerPageProps {
 }
 
 const TimerPage: React.FC<TimerPageProps> = ({ jobs, onAddJob, onToggleTodo }) => {
+  const [isNavOpen, setIsNavOpen] = useState(false); // Re-added isNavOpen state
   const [elapsedTime, setElapsedTime] = useState(0); // Time in milliseconds
   const [isRunning, setIsRunning] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
