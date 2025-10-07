@@ -1,6 +1,6 @@
 import React from 'react';
 import { Job, Customer } from '@/types'; // Import Customer type
-import { CalendarIcon, Clock, ListChecks, User as UserIcon } from 'lucide-react'; // Import UserIcon
+import { CalendarIcon, Clock, ListChecks, User as UserIcon, Building } from 'lucide-react'; // Import Building icon
 import { format, parseISO, differenceInDays, isPast, isToday, parse } from 'date-fns';
 import { Progress } from "@/components/ui/progress";
 import { getCategoryColor } from '@/lib/category-colors';
@@ -88,8 +88,12 @@ const JobQuickView: React.FC<JobQuickViewProps> = ({ job, onToggleTodo, customer
         )}
         {customer && (
           <div className="flex items-center">
-            <UserIcon className="mr-2 h-4 w-4" />
-            <span>Customer: {customer.name}</span>
+            {customer.companyName && <Building className="mr-2 h-4 w-4" />}
+            <span>
+              {customer.companyName && <span className="font-semibold">{customer.companyName}</span>}
+              {customer.companyName && customer.name && ` - `}
+              {customer.name}
+            </span>
           </div>
         )}
         {job.startDate && (

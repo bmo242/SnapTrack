@@ -21,6 +21,7 @@ export interface Job {
 
 export interface Customer {
   id: string;
+  companyName?: string; // New field for company name
   name: string;
   contactInfo?: string; // e.g., email, phone number
 }

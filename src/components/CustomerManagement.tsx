@@ -6,12 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Customer } from '@/types';
-import { PlusCircle, Edit, Trash2, User as UserIcon, Mail, Phone } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, User as UserIcon, Mail, Phone, Building } from 'lucide-react'; // Added Building icon
 import { toast } from 'sonner';
 
 interface CustomerManagementProps {
   customers: Customer[];
-  onAddCustomer: (name: string, contactInfo?: string) => void;
+  onAddCustomer: (companyName: string | undefined, name: string, contactInfo?: string) => void;
   onUpdateCustomer: (updatedCustomer: Customer) => void;
   onDeleteCustomer: (customerId: string) => void;
 }
@@ -22,11 +22,13 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({
   onUpdateCustomer,
   onDeleteCustomer,
 }) => {
+  const [newCompanyName, setNewCompanyName] = useState(''); // New state for company name
   const [newCustomerName, setNewCustomerName] = useState('');
   const [newCustomerContact, setNewCustomerContact] = useState('');
   const [isAddCustomerDialogOpen, setIsAddCustomerDialogOpen] = useState(false);
 
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [editCompanyName, setEditCompanyName] = useState(''); // New state for editing company name
   const [editCustomerName, setEditCustomerName] = useState('');
   const [editCustomerContact, setEditCustomerContact] = useState('');
   const [isEditCustomerDialogOpen, setIsEditCustomerDialogOpen] = useState(false);
@@ -34,7 +36,8 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({
   const handleAddCustomerSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newCustomerName.trim()) {
-      onAddCustomer(newCustomerName.trim(), newCustomerContact.trim() || undefined);
+      onAddCustomer(newCompanyName.trim() || undefined, newCustomerName.trim(), newCustomerContact.trim() || undefined);
+      setNewCompanyName('');
       setNewCustomerName('');
       setNewCustomerContact('');
       setIsAddCustomerDialogOpen(false);
@@ -46,6 +49,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({
 
   const handleEditCustomerClick = (customer: Customer) => {
     setEditingCustomer(customer);
+    setEditCompanyName(customer.companyName || ''); // Set company name for editing
     setEditCustomerName(customer.name);
     setEditCustomerContact(customer.contactInfo || '');
     setIsEditCustomerDialogOpen(true);
@@ -56,6 +60,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({
     if (editingCustomer && editCustomerName.trim()) {
       onUpdateCustomer({
         ...editingCustomer,
+        companyName: editCompanyName.trim() || undefined, // Update company name
         name: editCustomerName.trim(),
         contactInfo: editCustomerContact.trim() || undefined,
       });
@@ -83,6 +88,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({
               <CardDescription>Add a new customer to your list.</CardDescription>
             </DialogHeader>
             <form onSubmit={handleAddCustomerSubmit} className="space-y-4 py-4">
+              <div>
+                <Label htmlFor="companyName">Company Name (Optional)</Label>
+                <Input
+                  id="companyName"
+                  value={newCompanyName}
+                  onChange={(e) => setNewCompanyName(e.target.value)}
+                  placeholder="e.g., Acme Corp"
+                />
+              </div>
               <div>
                 <Label htmlFor="customerName">Customer Name</Label>
                 <Input
@@ -119,6 +133,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({
                 <div className="flex items-center space-x-3">
                   <UserIcon className="h-5 w-5 text-primary" />
                   <div>
+                    {customer.companyName && <p className="font-medium flex items-center"><Building className="h-4 w-4 mr-1 text-muted-foreground" /> {customer.companyName}</p>}
                     <p className="font-medium">{customer.name}</p>
                     {customer.contactInfo && (
                       <p className="text-sm text-muted-foreground flex items-center">
@@ -169,6 +184,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({
               <CardDescription>Update customer details.</CardDescription>
             </DialogHeader>
             <form onSubmit={handleUpdateCustomerSubmit} className="space-y-4 py-4">
+              <div>
+                <Label htmlFor="editCompanyName">Company Name (Optional)</Label>
+                <Input
+                  id="editCompanyName"
+                  value={editCompanyName}
+                  onChange={(e) => setEditCompanyName(e.target.value)}
+                  placeholder="e.g., Acme Corp"
+                />
+              </div>
               <div>
                 <Label htmlFor="editCustomerName">Customer Name</Label>
                 <Input

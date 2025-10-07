@@ -132,7 +132,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose, ca
             <SelectItem value="none">No Customer</SelectItem>
             {customers.map((customer) => (
               <SelectItem key={customer.id} value={customer.id}>
-                {customer.name}
+                {customer.companyName ? `${customer.companyName} (${customer.name})` : customer.name}
               </SelectItem>
             ))}
           </SelectContent>

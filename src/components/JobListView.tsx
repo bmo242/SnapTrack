@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Job, Customer } from '@/types'; // Import Customer type
 import { format, parseISO, parse, differenceInDays, isPast, isToday } from 'date-fns';
-import { Briefcase, CalendarIcon, ListChecks, User as UserIcon } from 'lucide-react'; // Import UserIcon
+import { Briefcase, CalendarIcon, ListChecks, User as UserIcon, Building } from 'lucide-react'; // Import Building icon
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { getCategoryColor } from '@/lib/category-colors';
@@ -137,8 +137,12 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onSelectJob, customers 
                       )}
                       {customer && (
                         <div className="flex items-center">
-                          <UserIcon className="mr-1 h-3 w-3" />
-                          <span>{customer.name}</span>
+                          {customer.companyName && <Building className="mr-1 h-3 w-3" />}
+                          <span>
+                            {customer.companyName && <span className="font-semibold">{customer.companyName}</span>}
+                            {customer.companyName && customer.name && ` - `}
+                            {customer.name}
+                          </span>
                         </div>
                       )}
                       {job.deadlineDate && (

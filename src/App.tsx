@@ -146,9 +146,10 @@ const App = () => {
     setUser(updatedUser);
   };
 
-  const handleAddCustomer = (name: string, contactInfo?: string) => {
+  const handleAddCustomer = (companyName: string | undefined, name: string, contactInfo?: string) => {
     const newCustomer: Customer = {
       id: uuidv4(),
+      companyName,
       name,
       contactInfo,
     };
@@ -205,7 +206,7 @@ const App = () => {
       <TooltipProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Overview jobs={jobs} user={user} onUpdateUser={handleUpdateUser} onAddJob={handleAddJob} />} />
+            <Route path="/" element={<Overview jobs={jobs} user={user} onUpdateUser={handleUpdateUser} onAddJob={handleAddJob} categories={categories} customers={customers} />} />
             <Route
               path="/jobs"
               element={
@@ -218,6 +219,7 @@ const App = () => {
                   onAddTemplatedTodos={handleAddTemplatedTodos}
                   onAddCustomTodo={handleAddCustomTodo}
                   categories={categories} // Pass categories to JobsPage
+                  customers={customers} // Pass customers to JobsPage
                 />
               }
             />
@@ -229,6 +231,7 @@ const App = () => {
                   onAddJob={handleAddJob}
                   onToggleTodo={handleToggleTodo}
                   categories={categories} // Pass categories to CalendarPage
+                  customers={customers} // Pass customers to CalendarPage
                 />
               }
             />

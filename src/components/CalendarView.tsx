@@ -14,7 +14,7 @@ import {
   parse,
 } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Briefcase, PlusCircle, User as UserIcon } from 'lucide-react'; // Import UserIcon
+import { ChevronLeft, ChevronRight, Briefcase, PlusCircle, User as UserIcon, Building } from 'lucide-react'; // Import Building icon
 import { Job, Customer } from '@/types'; // Import Customer type
 import { cn } from '@/lib/utils';
 import {
@@ -240,8 +240,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ jobs, onSelectJob, onAddJob
                         )}
                         {customer && (
                           <div className="flex items-center text-sm text-muted-foreground">
-                            <UserIcon className="h-3 w-3 mr-1" />
-                            <span>{customer.name}</span>
+                            {customer.companyName && <Building className="h-3 w-3 mr-1" />}
+                            <span>
+                              {customer.companyName && <span className="font-semibold">{customer.companyName}</span>}
+                              {customer.companyName && customer.name && ` - `}
+                              {customer.name}
+                            </span>
                           </div>
                         )}
                         {(event.job.startTime || event.job.endTime) && (

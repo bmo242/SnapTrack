@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates, Customer } from '@/types'; // Import Customer type
 import TodoItem from './TodoItem';
-import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock, ListChecks, User as UserIcon } from 'lucide-react'; // Import UserIcon
+import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock, ListChecks, User as UserIcon, Building } from 'lucide-react'; // Import Building icon
 import { format, parseISO, differenceInDays, isPast, isToday, parse } from 'date-fns';
 import {
   AlertDialog,
@@ -195,7 +195,11 @@ const JobCard: React.FC<JobCardProps> = ({
             {customer && (
               <div className="flex items-center">
                 <UserIcon className="mr-2 h-4 w-4" />
-                <span>Customer: {customer.name}</span>
+                <span>
+                  {customer.companyName && <span className="font-semibold">{customer.companyName}</span>}
+                  {customer.companyName && customer.name && ` - `}
+                  {customer.name}
+                </span>
               </div>
             )}
             {job.startDate && (
