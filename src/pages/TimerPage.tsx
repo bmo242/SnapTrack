@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Play, Pause, RotateCcw, Timer as TimerIcon } from 'lucide-react';
-import { Separator } => '@/components/ui/separator';
+import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 
 interface TimerPageProps {
