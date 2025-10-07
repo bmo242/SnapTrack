@@ -243,18 +243,18 @@ const JobCard: React.FC<JobCardProps> = ({
       <CardContent className="pt-0">
         {job.notes && (
           <Collapsible open={!isNotesCollapsed} onOpenChange={setIsNotesCollapsed} className="w-full mb-4">
-            <div className="flex items-center justify-between py-2">
-              <h3 className="text-lg font-semibold flex items-center">
-                <NotebookText className="mr-2 h-5 w-5 text-muted-foreground" />
-                Project Notes
-              </h3>
-              <CollapsibleTrigger asChild>
+            <CollapsibleTrigger asChild>
+              <div className="flex items-center justify-between py-2 cursor-pointer hover:bg-muted rounded-md px-2">
+                <h3 className="text-lg font-semibold flex items-center">
+                  <NotebookText className="mr-2 h-5 w-5 text-muted-foreground" />
+                  Project Notes
+                </h3>
                 <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
                   {isNotesCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                   <span className="sr-only">Toggle notes</span>
                 </Button>
-              </CollapsibleTrigger>
-            </div>
+              </div>
+            </CollapsibleTrigger>
             <CollapsibleContent className="space-y-2 text-sm text-muted-foreground">
               <p className="whitespace-pre-wrap">{job.notes}</p>
             </CollapsibleContent>
@@ -262,18 +262,18 @@ const JobCard: React.FC<JobCardProps> = ({
         )}
 
         <Collapsible open={!isTodosCollapsed} onOpenChange={setIsTodosCollapsed} className="w-full">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center w-full">
-              <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
-              <span className="ml-4 text-sm font-medium">{progress}%</span>
-            </div>
-            <CollapsibleTrigger asChild>
+          <CollapsibleTrigger asChild>
+            <div className="flex items-center justify-between py-4 cursor-pointer hover:bg-muted rounded-md px-2">
+              <div className="flex items-center w-full">
+                <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
+                <span className="ml-4 text-sm font-medium">{progress}%</span>
+              </div>
               <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
                 {isTodosCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                 <span className="sr-only">Toggle todos</span>
               </Button>
-            </CollapsibleTrigger>
-          </div>
+            </div>
+          </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="pb-4">
               <h3 className="text-lg font-semibold mb-2">To-Do List:</h3>
