@@ -1,6 +1,6 @@
 import React from 'react';
 import { Job, Customer } from '@/types'; // Import Customer type
-import { CalendarIcon, Clock, ListChecks, User as UserIcon, Building } from 'lucide-react'; // Import Building icon
+import { CalendarIcon, Clock, ListChecks, User as UserIcon, Building, NotebookText } from 'lucide-react'; // Import Building and NotebookText icon
 import { format, parseISO, differenceInDays, isPast, isToday, parse } from 'date-fns';
 import { Progress } from "@/components/ui/progress";
 import { getCategoryColor } from '@/lib/category-colors';
@@ -124,6 +124,16 @@ const JobQuickView: React.FC<JobQuickViewProps> = ({ job, onToggleTodo, customer
           </div>
         )}
       </div>
+
+      {job.notes && (
+        <div className="space-y-2">
+          <h4 className="text-lg font-semibold mt-4 flex items-center">
+            <NotebookText className="mr-2 h-5 w-5 text-muted-foreground" />
+            Project Notes:
+          </h4>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{job.notes}</p>
+        </div>
+      )}
 
       {totalCountable > 0 && (
         <div className="space-y-2">

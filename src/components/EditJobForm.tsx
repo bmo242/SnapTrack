@@ -35,6 +35,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose, ca
     !categories.includes(job.category) && job.category !== "Uncategorized" ? job.category : ''
   );
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>(job.customerId); // New state for customer
+  const [notes, setNotes] = useState(job.notes || ''); // New state for notes
 
   useEffect(() => {
     setTitle(job.title);
@@ -55,6 +56,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose, ca
       setCustomCategory(job.category);
     }
     setSelectedCustomerId(job.customerId);
+    setNotes(job.notes || ''); // Set notes
   }, [job, categories]); // Added categories to dependency array
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -71,6 +73,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose, ca
         endTime: endTime.trim() || undefined,
         category: finalCategory || "Uncategorized",
         customerId: selectedCustomerId === "none" ? undefined : selectedCustomerId, // Handle "No Customer" option
+        notes: notes.trim() || undefined, // Include notes
       };
       onUpdateJob(updatedJob);
       onClose();
@@ -209,6 +212,16 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdateJob, onClose, ca
             onChange={(e) => setEndTime(e.target.value)}
           />
         </div>
+      </div>
+      <div>
+        <Label htmlFor="editProjectNotes">Project Notes (Optional)</Label>
+        <Textarea
+          id="editProjectNotes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Add any relevant project notes here..."
+          rows={4}
+        />
       </div>
       <Button type="submit" className="w-full">Save Changes</Button>
     </form>

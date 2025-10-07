@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Job, TodoItem as TodoItemType, defaultTodoTemplates, Customer } from '@/types'; // Import Customer type
 import TodoItem from './TodoItem';
-import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock, ListChecks, User as UserIcon, Building } from 'lucide-react'; // Import Building icon
+import { PlusCircle, CalendarIcon, Edit, Trash2, ChevronDown, ChevronUp, Clock, ListChecks, User as UserIcon, Building, NotebookText } from 'lucide-react'; // Import Building and NotebookText icon
 import { format, parseISO, differenceInDays, isPast, isToday, parse } from 'date-fns';
 import {
   AlertDialog,
@@ -48,7 +48,8 @@ const JobCard: React.FC<JobCardProps> = ({
 }) => {
   const [customTodoTitle, setCustomTodoTitle] = useState('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isTodosCollapsed, setIsTodosCollapsed] = useState(true); // State for todo collapsible
+  const [isNotesCollapsed, setIsNotesCollapsed] = useState(true); // State for notes collapsible
 
   const handleCustomTodoSubmit = () => {
     if (customTodoTitle.trim()) {
@@ -240,7 +241,27 @@ const JobCard: React.FC<JobCardProps> = ({
       </CardHeader>
 
       <CardContent className="pt-0">
-        <Collapsible open={!isCollapsed} onOpenChange={(newOpenState) => setIsCollapsed(!newOpenState)} className="w-full">
+        {job.notes && (
+          <Collapsible open={!isNotesCollapsed} onOpenChange={setIsNotesCollapsed} className="w-full mb-4">
+            <div className="flex items-center justify-between py-2">
+              <h3 className="text-lg font-semibold flex items-center">
+                <NotebookText className="mr-2 h-5 w-5 text-muted-foreground" />
+                Project Notes
+              </h3>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
+                  {isNotesCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                  <span className="sr-only">Toggle notes</span>
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+            <CollapsibleContent className="space-y-2 text-sm text-muted-foreground">
+              <p className="whitespace-pre-wrap">{job.notes}</p>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
+
+        <Collapsible open={!isTodosCollapsed} onOpenChange={setIsTodosCollapsed} className="w-full">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center w-full">
               <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
@@ -248,8 +269,8 @@ const JobCard: React.FC<JobCardProps> = ({
             </div>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
-                {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-                <span className="sr-only">Toggle</span>
+                {isTodosCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                <span className="sr-only">Toggle todos</span>
               </Button>
             </CollapsibleTrigger>
           </div>

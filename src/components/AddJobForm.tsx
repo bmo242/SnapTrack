@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Customer } from '@/types'; // Import Customer type
 
 interface AddJobFormProps {
-  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => void;
+  onAddJob: (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string, notes?: string) => void;
   initialStartDate?: Date | null;
   categories: string[]; // New prop for dynamic categories
   customers: Customer[]; // New prop for customers
@@ -28,6 +28,7 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate, cat
   const [category, setCategory] = useState(categories.includes("Uncategorized") ? "Uncategorized" : categories[0] || "");
   const [customCategory, setCustomCategory] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>(undefined); // New state for customer
+  const [notes, setNotes] = useState(''); // New state for notes
 
   useEffect(() => {
     setStartDate(initialStartDate || undefined);
@@ -52,7 +53,8 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate, cat
         startTime.trim() || undefined,
         endTime.trim() || undefined,
         finalCategory || "Uncategorized",
-        selectedCustomerId // Pass selected customer ID
+        selectedCustomerId, // Pass selected customer ID
+        notes.trim() || undefined // Pass notes
       );
       setTitle('');
       setDescription('');
@@ -63,6 +65,7 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate, cat
       setCategory(categories.includes("Uncategorized") ? "Uncategorized" : categories[0] || "");
       setCustomCategory('');
       setSelectedCustomerId(undefined); // Reset customer selection
+      setNotes(''); // Reset notes
     }
   };
 
@@ -198,6 +201,16 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onAddJob, initialStartDate, cat
             onChange={(e) => setEndTime(e.target.value)}
           />
         </div>
+      </div>
+      <div>
+        <Label htmlFor="projectNotes">Project Notes (Optional)</Label>
+        <Textarea
+          id="projectNotes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Add any relevant project notes here..."
+          rows={4}
+        />
       </div>
       <Button type="submit" className="w-full">Add Job</Button>
     </form>

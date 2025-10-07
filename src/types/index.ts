@@ -17,6 +17,7 @@ export interface Job {
   templatedTodosAdded?: boolean; // New flag to track if templated todos have been added
   category: string; // New field for job category
   customerId?: string; // New field to link to a customer
+  notes?: string; // New field for project notes
 }
 
 export interface Customer {

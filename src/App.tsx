@@ -27,7 +27,7 @@ const App = () => {
   const [customers, setCustomers] = useCustomersPersistence();
   const [categories, setCategories] = useCategoriesPersistence();
 
-  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string) => {
+  const handleAddJob = (title: string, description: string, startDate?: string, deadlineDate?: string, startTime?: string, endTime?: string, category?: string, customerId?: string, notes?: string) => {
     const newJob: Job = {
       id: uuidv4(),
       title,
@@ -40,6 +40,7 @@ const App = () => {
       templatedTodosAdded: false,
       category: category || "Uncategorized",
       customerId,
+      notes, // Include notes
     };
     setJobs((prevJobs) => [...prevJobs, newJob]);
   };
