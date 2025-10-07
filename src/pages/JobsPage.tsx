@@ -94,6 +94,7 @@ const JobsPage: React.FC<JobsPageProps> = ({
           )}
         </div>
       </div>
+      <div className="pb-8"></div> {/* Added bottom spacing */}
     </div>
   );
 };

@@ -45,6 +45,7 @@ const Overview: React.FC<OverviewProps> = ({ jobs, user, onUpdateUser, onAddJob 
           <ActiveProjectsCarousel jobs={jobs} onSelectJob={handleSelectJob} /> {/* Pass onSelectJob */}
           <DailyActivityChart jobs={jobs} /> {/* Add the new DailyActivityChart */}
         </div>
+        <div className="pb-8"></div> {/* Added bottom spacing */}
       </div>
   );
 };

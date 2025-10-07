@@ -74,6 +74,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ jobs, onAddJob, onToggleTod
           )}
         </DialogContent>
       </Dialog>
+      <div className="pb-8"></div> {/* Added bottom spacing */}
     </div>
   );
 };
