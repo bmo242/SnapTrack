@@ -249,10 +249,10 @@ const JobCard: React.FC<JobCardProps> = ({
                   <NotebookText className="mr-2 h-5 w-5 text-muted-foreground" />
                   Project Notes
                 </h3>
-                <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
+                <span className="w-9 p-0 ml-2 flex items-center justify-center"> {/* Replaced Button with span */}
                   {isNotesCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                   <span className="sr-only">Toggle notes</span>
-                </Button>
+                </span>
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-2 text-sm text-muted-foreground">
@@ -268,10 +268,10 @@ const JobCard: React.FC<JobCardProps> = ({
                 <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
                 <span className="ml-4 text-sm font-medium">{progress}%</span>
               </div>
-              <Button variant="ghost" size="sm" className="w-9 p-0 ml-2">
+              <span className="w-9 p-0 ml-2 flex items-center justify-center"> {/* Replaced Button with span */}
                 {isTodosCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                 <span className="sr-only">Toggle todos</span>
-              </Button>
+              </span>
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent>
