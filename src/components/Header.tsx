@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton =
         <Menu className="h-6 w-6" />
         <span className="sr-only">Open navigation</span>
       </Button>
-      <h1 className="text-3xl font-bold text-primary flex-grow text-center sm:text-left">SnapTrack</h1>
+      <h1 className="text-3xl font-bold text-primary flex-grow text-center">SnapTrack</h1> {/* Removed sm:text-left */}
       {showAddJobButton && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
