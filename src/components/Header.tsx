@@ -24,25 +24,35 @@ const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton =
 
   return (
     <header className="w-full flex items-center justify-between mb-8 px-4 py-4 bg-card rounded-b-lg shadow-sm">
-      <Button variant="ghost" size="icon" onClick={onOpenNav} className=""> {/* Removed sm:hidden */}
+      <Button variant="ghost" size="icon" onClick={onOpenNav} className="">
         <Menu className="h-6 w-6" />
         <span className="sr-only">Open navigation</span>
       </Button>
       <h1 className="text-3xl font-bold text-primary flex-grow text-center sm:text-left">SnapTrack</h1>
       {showAddJobButton && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DialogTrigger asChild>
+          <DialogTrigger asChild>
+            <Tooltip>
+              <TooltipTrigger asChild>
                 <Button size="icon" className="ml-auto">
                   <FilePlus className="h-5 w-5" />
                   <span className="sr-only">Add New Job</span>
                 </Button>
-              </DialogTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Add New Job</p>
-            </TooltipContent>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Add New Job</p>
+              </TooltipContent>
+            </Tooltip>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Add New Job</DialogTitle>
+            </DialogHeader>
+            <AddJobForm
+              onAddJob={handleAddJobAndClose}
+              categories={categories}
+              customers={customers}
+            />
           </DialogContent>
         </Dialog>
       )}
