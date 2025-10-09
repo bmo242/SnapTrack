@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton =
 
   return (
     <header className="w-full flex items-center justify-between mb-8 px-4 py-4 bg-card rounded-b-lg shadow-sm">
-      <Button variant="ghost" size="icon" onClick={onOpenNav} className="sm:hidden">
+      <Button variant="ghost" size="icon" onClick={onOpenNav} className=""> {/* Removed sm:hidden */}
         <Menu className="h-6 w-6" />
         <span className="sr-only">Open navigation</span>
       </Button>
@@ -43,12 +43,6 @@ const Header: React.FC<HeaderProps> = ({ onAddJob, onOpenNav, showAddJobButton =
             <TooltipContent>
               <p>Add New Job</p>
             </TooltipContent>
-          </Tooltip>
-          <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Create New Job</DialogTitle>
-            </DialogHeader>
-            <AddJobForm onAddJob={handleAddJobAndClose} categories={categories} customers={customers} />
           </DialogContent>
         </Dialog>
       )}
