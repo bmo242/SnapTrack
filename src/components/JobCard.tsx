@@ -49,7 +49,6 @@ const JobCard: React.FC<JobCardProps> = ({
   const [customTodoTitle, setCustomTodoTitle] = useState('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isTodosCollapsed, setIsTodosCollapsed] = useState(true); // State for todo collapsible
-  const [isNotesCollapsed, setIsNotesCollapsed] = useState(true); // State for notes collapsible
 
   const handleCustomTodoSubmit = () => {
     if (customTodoTitle.trim()) {
@@ -242,23 +241,13 @@ const JobCard: React.FC<JobCardProps> = ({
 
       <CardContent className="pt-0">
         {job.notes && (
-          <Collapsible open={!isNotesCollapsed} onOpenChange={setIsNotesCollapsed} className="w-full mb-4">
-            <CollapsibleTrigger asChild>
-              <div className="flex items-center justify-between py-2 cursor-pointer hover:bg-muted rounded-md px-2">
-                <h3 className="text-lg font-semibold flex items-center">
-                  <NotebookText className="mr-2 h-5 w-5 text-muted-foreground" />
-                  Project Notes
-                </h3>
-                <span className="w-9 p-0 ml-2 flex items-center justify-center"> {/* Replaced Button with span */}
-                  {isNotesCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-                  <span className="sr-only">Toggle notes</span>
-                </span>
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="space-y-2 text-sm text-muted-foreground">
-              <p className="whitespace-pre-wrap">{job.notes}</p>
-            </CollapsibleContent>
-          </Collapsible>
+          <div className="w-full mb-4"> {/* Removed Collapsible, now always visible */}
+            <h3 className="text-lg font-semibold flex items-center mb-2">
+              <NotebookText className="mr-2 h-5 w-5 text-muted-foreground" />
+              Project Notes
+            </h3>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{job.notes}</p>
+          </div>
         )}
 
         <Collapsible open={!isTodosCollapsed} onOpenChange={setIsTodosCollapsed} className="w-full">
@@ -268,7 +257,7 @@ const JobCard: React.FC<JobCardProps> = ({
                 <Progress value={progress} className="w-[calc(100%-60px)]" indicatorClassName={progressBarColorClass} />
                 <span className="ml-4 text-sm font-medium">{progress}%</span>
               </div>
-              <span className="w-9 p-0 ml-2 flex items-center justify-center"> {/* Replaced Button with span */}
+              <span className="w-9 p-0 ml-2 flex items-center justify-center">
                 {isTodosCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                 <span className="sr-only">Toggle todos</span>
               </span>
